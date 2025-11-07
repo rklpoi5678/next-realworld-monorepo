@@ -23,7 +23,22 @@
   ],
   "author": "kim-youn-gi <meta-os@zohomail.com> (https://github.com/rklpoi5678/next-realworld-monorepo/tree/develop)",
   "license": "MIT",
+  "dependencies": {
+    "turbo": "^3.6.0"
+  },
   "devDependencies": {
-    "turbo": "^2.6.0"
+    "@eslint/eslintrc": "^3.1.0",
+    "@packages/eslint-config": "workspace:*",
+    "@packages/tsconfig": "workspace:*",
+    "@types/eslint": "^9.6.1",
+    "@types/eslint__js": "^8.42.3",
+    "@types/node": "^20.14.0",
+    "@typescript-eslint/eslint-plugin": "^8.3.0",
+    "@typescript-eslint/parser": "^8.3.0",
+    "eslint": "^9.9.0",
+    "husky": "^9.1.4",
+    "jiti": "^1.21.6",
+    "lint-staged": "^15.2.9",
+    "typescript": "^5.5.4"
   }
 }
