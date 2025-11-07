@@ -1,0 +1,29 @@
+{
+  "name": "next-realworld-monorepo",
+  "version": "1.0.0",
+  "description": "A production-ready Next.js monorepo boilerplate built with the App Router. Features diverse real-world examples using modern technologies like TypeScript, Prisma, Tailwind CSS, and Zod. License",
+  "main": "index.js",
+  "bugs": {
+    "url": "https://github.com/rklpoi5678/next-realworld-monorepo/issues"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build"
+  },
+  "packageManager": "pnpm@10.18.1",
+  "engines": {
+    "node": ">=24.x",
+    "pnpm": ">=10.x",
+    "npm": "use-pnpm",
+    "yarn": "use-pnpm"
+  },
+  "keywords": [
+    "realworld",
+    "meta"
+  ],
+  "author": "kim-youn-gi <meta-os@zohomail.com> (https://github.com/rklpoi5678/next-realworld-monorepo/tree/develop)",
+  "license": "MIT",
+  "devDependencies": {
+    "turbo": "^2.6.0"
+  }
+}

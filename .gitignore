@@ -1,0 +1,23 @@
+node_modules
+
+# Else
+.DS_Store
+**/.DS_Store
+
+# build
+**/node_modules/
+**/dist/
+**/build/**
+**/.next/**
+
+# env
+.env
+.env.*
+**/.env.*
+!**/**/.env.example
+
+## turbo
+**/.turbo
+out
+## turbo-repo
+.turbo
