@@ -7,6 +7,8 @@
     "url": "https://github.com/rklpoi5678/next-realworld-monorepo/issues"
   },
   "scripts": {
+    "format": "pnpm prettier --write \"**/*.{ts,tsx,md}\"",
+    "prepare": "husky",
     "dev": "turbo run dev",
     "build": "turbo run build"
   },
@@ -24,7 +26,7 @@
   "author": "kim-youn-gi <meta-os@zohomail.com> (https://github.com/rklpoi5678/next-realworld-monorepo/tree/develop)",
   "license": "MIT",
   "dependencies": {
-    "turbo": "^3.6.0"
+    "turbo": "^2.6.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
@@ -37,7 +39,6 @@
     "@typescript-eslint/parser": "^8.3.0",
     "eslint": "^9.9.0",
     "husky": "^9.1.4",
-    "jiti": "^1.21.6",
     "lint-staged": "^15.2.9",
     "typescript": "^5.5.4"
   }

@@ -15,9 +15,7 @@
       ]
     },
     "lint": {
-      "dependsOn": [
-        "^lint"
-      ]
+      "dependsOn": []
     },
     "dev": {
       "cache": false,
