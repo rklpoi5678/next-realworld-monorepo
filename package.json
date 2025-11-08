@@ -6,11 +6,13 @@
   "bugs": {
     "url": "https://github.com/rklpoi5678/next-realworld-monorepo/issues"
   },
+  "type": "module",
   "scripts": {
     "format": "pnpm prettier --write \"**/*.{ts,tsx,md}\"",
     "prepare": "husky",
     "dev": "turbo run dev",
-    "build": "turbo run build"
+    "build": "turbo run build",
+    "lint-staged": "eslint --fix --max-warning=0"
   },
   "packageManager": "pnpm@10.18.1",
   "engines": {
