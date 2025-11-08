@@ -1,0 +1,47 @@
+{
+  "name": "next-realworld-monorepo",
+  "version": "1.0.0",
+  "description": "A production-ready Next.js monorepo boilerplate built with the App Router. Features diverse real-world examples using modern technologies like TypeScript, Prisma, Tailwind CSS, and Zod. License",
+  "main": "index.js",
+  "bugs": {
+    "url": "https://github.com/rklpoi5678/next-realworld-monorepo/issues"
+  },
+  "type": "module",
+  "scripts": {
+    "format": "pnpm prettier --write \"**/*.{ts,tsx,md}\"",
+    "prepare": "husky",
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint-staged": "eslint --fix --max-warnings=0"
+  },
+  "packageManager": "pnpm@10.18.1",
+  "engines": {
+    "node": ">=24.x",
+    "pnpm": ">=10.x",
+    "npm": "use-pnpm",
+    "yarn": "use-pnpm"
+  },
+  "keywords": [
+    "realworld",
+    "meta"
+  ],
+  "author": "kim-youn-gi <meta-os@zohomail.com> (https://github.com/rklpoi5678/next-realworld-monorepo/tree/develop)",
+  "license": "MIT",
+  "dependencies": {
+    "turbo": "^2.6.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@packages/eslint-config": "workspace:*",
+    "@packages/tsconfig": "workspace:*",
+    "@types/eslint": "^9.6.1",
+    "@types/eslint__js": "^8.42.3",
+    "@types/node": "^20.19.24",
+    "@typescript-eslint/eslint-plugin": "^8.46.3",
+    "@typescript-eslint/parser": "^8.46.3",
+    "eslint": "^9.39.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.2",
+    "typescript": "^5.9.3"
+  }
+}
