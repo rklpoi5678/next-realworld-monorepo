@@ -5,6 +5,14 @@
   --foreground: #171717;
 }
 
+/* if dark => color exchange*/
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -19,8 +27,27 @@
   }
 }
 
+/* 
+  overlay scrollbar: 스크롤 동작시에만 스크롤바가 나타남 스크롤바가 공간을 차지하지 않음
+  classic scrollbar: 스크롤을 동작하지않아도 스크롤바가 일부공간을 차지함
+
+  scrollbar-gutter 은 auto | stable && both-edges
+  auto(기본값): 스크롤바 없을경우없을경우 box가 넘쳐 스크롤이 생긴 경우에 스크롤바 공간이 생성 
+  stable: 스크롤바가 없을 경우에도 스크롤바 영역을 생성
+  stable both-edges: stable과 함께 쓰이는 옵션, 스크롤바가 위치한 오른쪽뿐아니라 
+  왼쪽에도 동일한 크기의 공간을 생성해줌 좌우 정렬이 틀어지지 않도록 도와줌
+*/
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+html,
+body {
+  min-height: 100vh;
 }
