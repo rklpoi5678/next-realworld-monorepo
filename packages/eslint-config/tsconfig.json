@@ -1,0 +1,22 @@
+{
+  "extends": "@packages/tsconfig/base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "baseUrl": "./",
+    "outDir": "./dist",
+    "declaration": true,
+    "allowJs": true,
+    "typeRoots": [
+      "./node_modules/@types",
+      "./types"
+    ]
+  },
+  "include": [
+    "./src",
+    "./types.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}
