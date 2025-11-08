@@ -1,7 +1,8 @@
-import { Linter } from 'eslint'
 import { resolve } from 'node:path'
+
 import { FlatCompat } from '@eslint/eslintrc'
 import js from '@eslint/js'
+import { Linter } from 'eslint'
 import nextVitals from 'eslint-config-next/core-web-vitals'
 import prettierConfig from 'eslint-config-prettier'
 import checkFilePlugin from 'eslint-plugin-check-file'
@@ -24,9 +25,8 @@ const nextConfig = (projectPath: string) => {
     allConfig: js.configs.all,
   })
 
-  const nextAppRules = compat.config({
+  const legacyNextRulesConfig = {
     // next.js 앱 모든 소스파일에 적용
-    files: ['**/*.{js,jsx,ts,tsx}'],
     parser: '@typescript-eslint/parser',
     parserOptions: {
       project: tsconfigPath,
@@ -56,7 +56,14 @@ const nextConfig = (projectPath: string) => {
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
     },
-  })
+  }
+
+  const convertedNextAppRules = compat.config(legacyNextRulesConfig)
+
+  const nextAppRules = convertedNextAppRules.map((config: any) => ({
+    ...config,
+    files: ['**/*.{js,jsx,ts,tsx}'],
+  }))
 
   // 정렬 및 파일명 규칙
   const ImportSortConfig = {

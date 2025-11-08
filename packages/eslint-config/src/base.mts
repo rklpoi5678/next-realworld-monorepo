@@ -1,4 +1,5 @@
 import { resolve } from 'node:path'
+
 import { FlatCompat } from '@eslint/eslintrc'
 import js from '@eslint/js'
 import type { Linter } from 'eslint'
