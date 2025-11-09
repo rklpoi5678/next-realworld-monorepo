@@ -13,6 +13,7 @@ export default async function Home({
   // searchParams,}: {
   // searchParams: SearchParams;
 }) {
+  /** @see https://nextjs.org/docs/app/api-reference/functions/cookies */
   // const cookieStore = await cookies();
   // const token = cookieStore.get("token")?.value;
   // const headers = optionalAuthHeaders(token);
