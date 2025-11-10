@@ -3,54 +3,60 @@
 // import { Pagination } from "@/components/ui/Pagination";
 // import SelectTag from "@/components/ui/tag/SelectTag";
 
-// import { SearchParams } from "@/types/global";
-// import { optionalAuthHeaders } from "@/utils/auth/optionalAuthHeaders";
-// import { parseQueryParams } from "@/utils/parseQueryParams";
-// import { cookies } from "next/headers";
+import { cookies } from "next/headers";
+
+import { Pagination } from "#/components/pagination";
+import { optionalAuthHeaders } from "#/libs/utils/auth/optional-auth-headers";
+import { parseQueryParams } from "#/libs/utils/auth/parse-query-params";
+import { SearchParams } from "#/types/global";
 // import SWRProvider from "@/lib/swr/SWRProvider";
 
 export default async function Home({
-  // searchParams,}: {
-  // searchParams: SearchParams;
+  searchParams,
+}: {
+  searchParams: SearchParams;
 }) {
   /** @see https://nextjs.org/docs/app/api-reference/functions/cookies */
-  // const cookieStore = await cookies();
-  // const token = cookieStore.get("token")?.value;
-  // const headers = optionalAuthHeaders(token);
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+  const headers = optionalAuthHeaders(token);
 
-  // const { apiQueryString, tab, tag } = await parseQueryParams({ searchParams });
+  // tag
+  const { apiQueryString, tab } = await parseQueryParams({ searchParams });
 
-  // const articlesKey = `/api/articles?${apiQueryString}`;
-  // const feedKey = `/api/articles/feed?${apiQueryString}`;
+  const articlesKey = `/api/articles?${apiQueryString}`;
+  const feedKey = `/api/articles/feed?${apiQueryString}`;
 
-  // const apiKeys = {
-  //   articlesKey,
-  //   feedKey,
-  // } as const;
+  const apiKeys = {
+    articlesKey,
+    feedKey,
+  } as const;
 
-  // // API 요청을 병렬로 실행
-  // const [globalData, feedData, { tags }] = await Promise.all([
-  //   fetch(`${process.env.NEXT_PUBLIC_API_URL}${apiKeys.articlesKey}`, {
-  //     headers,
-  //     cache: "no-store",
-  //   }).then((res) => res.json()),
-  //   fetch(`${process.env.NEXT_PUBLIC_API_URL}${apiKeys.feedKey}`, {
-  //     headers,
-  //     cache: "no-store",
-  //   }).then((res) => res.json()),
-  //   fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tags`, {
-  //     headers,
-  //     cache: "no-store",
-  //   }).then((res) => res.json()),
-  // ]);
+  // API 요청을 병렬로 실행
+  // tags
+  const [globalData, feedData] = await Promise.all([
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}${apiKeys.articlesKey}`, {
+      headers,
+      cache: "no-store",
+    }).then((res) => res.json()),
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}${apiKeys.feedKey}`, {
+      headers,
+      cache: "no-store",
+    }).then((res) => res.json()),
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tags`, {
+      headers,
+      cache: "no-store",
+    }).then((res) => res.json()),
+  ]);
 
-  // const articlesCount =
-  //   tab === "personal" ? feedData.articlesCount : globalData.articlesCount;
+  const articlesCount =
+    tab === "personal" ? feedData.articlesCount : globalData.articlesCount;
 
   // const fallback = {
   //   [apiKeys.articlesKey]: globalData,
   //   [apiKeys.feedKey]: feedData,
   // };
+
   return (
     <div>
       {/* 헤더 섹션 - 컴포넌트로 분리 가능 */}
@@ -81,7 +87,7 @@ export default async function Home({
             {/* <FeedToggle params={{ tab, tag }} isLoggedIn={!!token} /> */}
             {/* <ArticleList apiKeys={apiKeys} tab={tab} /> */}
             <div className="mt-8">
-              {/* <Pagination total={articlesCount} limit={10} /> */}
+              <Pagination total={articlesCount} limit={10} />
             </div>
           </div>
 
