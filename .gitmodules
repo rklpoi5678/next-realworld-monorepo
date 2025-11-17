@@ -1,0 +1,4 @@
+[submodule "apps/nextjs-panda-market-realworld"]
+	path = apps/nextjs-panda-market-realworld
+	url = https://github.com/rklpoi5678/9-sprint-mission-fe.git
+	branch = next-김윤기
