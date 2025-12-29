@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "eslint",
     "prepare": "husky",
-    "check-types": "tsc --project tsconfig.json --pretty --noEmit"
+    "check-types": "tsc --project tsconfig.json --pretty --noEmit",
+    "generate": "plop"
   },
   "dependencies": {
     "nanoid": "^5.1.6",
@@ -40,6 +41,7 @@
     "lint-staged": "^16.2.7",
     "msw": "^2.12.7",
     "pino-http": "^11.0.0",
+    "plop": "^4.0.4",
     "prettier": "^3.7.4",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
