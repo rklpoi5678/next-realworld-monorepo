@@ -25,6 +25,8 @@ export const decode = <T>(str: string): T => {
 };
 
 /** 단순 해시 함수 (일관성 유지) */
+// 참고: 실제 목업이라도 레인보우 테이블 공격에 취약하지않게 또한 프로덕션 코드로 실수로 이식될 
+// 위험을 줄이기위해 bcrypt를 사용하는게 좋습니다.
 export const hash = (str: string): string => {
   let hash = 5381;
   let i = str.length;
