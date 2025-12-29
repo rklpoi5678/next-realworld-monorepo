@@ -11,5 +11,5 @@ export default function plopfile(plop: NodePlopAPI): void {
   plop.setGenerator('component', componentGenerator);
 
   // feature 생성기를 등록하면 프로젝트 관리가 더 편해진다.
-  // plop.setGenerrator('feature', featureGenerator);
+  // plop.setGenerator('feature', featureGenerator);
 }
