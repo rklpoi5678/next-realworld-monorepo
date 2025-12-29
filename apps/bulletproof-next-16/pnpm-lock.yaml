@@ -48,6 +48,9 @@ importers:
       '@storybook/nextjs':
         specifier: ^10.1.10
         version: 10.1.10(msw@2.12.7(@types/node@20.19.27)(typescript@5.9.3))(next@16.1.1(@babel/core@7.28.5)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(type-fest@2.19.0)(typescript@5.9.3)(vite@7.3.0(@types/node@20.19.27)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(webpack-hot-middleware@2.26.1)(webpack@5.104.1)
+      '@storybook/react':
+        specifier: ^10.1.10
+        version: 10.1.10(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.1.18
@@ -114,6 +117,9 @@ importers:
       prettier:
         specifier: ^3.7.4
         version: 3.7.4
+      react-docgen-typescript:
+        specifier: ^2.4.0
+        version: 2.4.0(typescript@5.9.3)
       tailwindcss:
         specifier: ^4
         version: 4.1.18

@@ -13,7 +13,9 @@
     "generate": "NODE_OPTIONS='--import tsx' plop",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "nanoid": "^5.1.6",
@@ -31,6 +33,7 @@
     "@storybook/addon-interactions": "^8.6.14",
     "@storybook/addon-links": "^10.1.10",
     "@storybook/nextjs": "^10.1.10",
+    "@storybook/react": "^10.1.10",
     "@tailwindcss/postcss": "^4",
     "@types/cors": "^2.8.19",
     "@types/node": "^20",
@@ -53,6 +56,7 @@
     "pino-http": "^11.0.0",
     "plop": "^4.0.4",
     "prettier": "^3.7.4",
+    "react-docgen-typescript": "^2.4.0",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
     "typescript": "^5",
