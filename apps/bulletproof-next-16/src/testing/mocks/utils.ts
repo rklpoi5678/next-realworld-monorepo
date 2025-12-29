@@ -3,11 +3,25 @@ import { delay } from 'msw';
 import { db } from './db';
 
 /** Base64 Encoding/Decoding (표준 API) */
+// btoa와 atob은 브라우저 전용 API mock-server.ts(express서버)에서 사용되는데
+// Node.js환경에서는 btoa와 atob가 정의되지 않아 런타임 오류가 발생할수있음
 export const encode = (obj: object): string => {
-  return btoa(JSON.stringify(obj));
+  const jsonString = JSON.stringify(obj);
+  if (typeof btoa !== 'undefined') {
+    return btoa(jsonString);
+  }
+  // Node.js fallback
+  return Buffer.from(jsonString, 'utf-8').toString('base64');
 };
 export const decode = <T>(str: string): T => {
-  return JSON.parse(atob(str)) as T;
+  let jsonString: string;
+  if (typeof atob !== 'undefined') {
+    jsonString = atob(str);
+  } else {
+    // Node.js fallback
+    jsonString = Buffer.from(str, 'base64').toString('utf-8');
+  }
+  return JSON.parse(jsonString) as T;
 };
 
 /** 단순 해시 함수 (일관성 유지) */
@@ -84,8 +98,8 @@ export function requireAuth(cookies: Record<string, string | string[] | undefine
 }
 
 /** 관리자 권한 확인 */
-export function requireAdmin(user: {role?:string} | null | undefined) {
-    if (user?.role !== 'ADMIN'){
-        throw new Error('Unauthorized')
-    }
+export function requireAdmin(user: { role?: string } | null | undefined) {
+  if (user?.role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
 }
