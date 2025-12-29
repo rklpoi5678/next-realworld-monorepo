@@ -10,7 +10,10 @@
     "lint": "eslint",
     "prepare": "husky",
     "check-types": "tsc --project tsconfig.json --pretty --noEmit",
-    "generate": "NODE_OPTIONS='--import tsx' plop"
+    "generate": "NODE_OPTIONS='--import tsx' plop",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "nanoid": "^5.1.6",
@@ -29,6 +32,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^5.1.2",
+    "@vitest/coverage-v8": "^4.0.16",
     "babel-plugin-react-compiler": "1.0.0",
     "cors": "^2.8.5",
     "eslint": "^9.39.2",
