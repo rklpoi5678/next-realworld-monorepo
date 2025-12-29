@@ -51,7 +51,7 @@ export const authHandlers = [
 
         if (!existingTeam) {
           return HttpResponse.json(
-            { message: 'The  team you are trying to join does not exist!' },
+            { message: 'The team you are trying to join does not exist!' },
             { status: 400 },
           );
         }

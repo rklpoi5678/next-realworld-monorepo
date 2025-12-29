@@ -5,8 +5,8 @@ const envSchema = z.object({
   API_URL: z.string(),
   ENABLE_API_MOCKING: z
     .enum(['true', 'false'])
-    .transform((val) => val === 'true')
-    .default(false),
+    .default('false')
+    .transform((val) => val === 'true'),
   APP_URL: z.string().optional().default('http://localhost:3000'),
   APP_MOCK_API_PORT: z.string().optional().default('8080'),
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
