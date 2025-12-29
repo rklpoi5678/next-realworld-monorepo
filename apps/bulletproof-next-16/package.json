@@ -10,7 +10,7 @@
     "lint": "eslint",
     "prepare": "husky",
     "check-types": "tsc --project tsconfig.json --pretty --noEmit",
-    "generate": "plop"
+    "generate": "NODE_OPTIONS='--import tsx' plop"
   },
   "dependencies": {
     "nanoid": "^5.1.6",
