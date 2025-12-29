@@ -62,17 +62,17 @@ export const componentGenerator: PlopGeneratorConfig = {
     return [
       {
         type: 'add',
-        path: `${componentPath}/index.ts`,
+        path: componentPath + '/index.ts',
         templateFile: 'generators/component/index.ts.hbs',
       },
       {
         type: 'add',
-        path: `${componentPath}/{{kebabCase name}}.tsx`,
+        path: componentPath + '/{{kebabCase name}}.tsx',
         templateFile: 'generators/component/component.tsx.hbs',
       },
       {
         type: 'add',
-        path: `${componentPath}/{{kebabCase name}}.stories.tsx`,
+        path: componentPath + '/{{kebabCase name}}.stories.tsx',
         templateFile: 'generators/component/component.stories.tsx.hbs',
       },
     ];
