@@ -127,7 +127,7 @@ export const commentsHandlers = [
 
       // 일반 유저인데 본인댓글이 아닌 경우
       if (user.role === 'USER' && comment.authorId !== user.id) {
-        return HttpResponse.json({ message: 'Unauthorized' }, { status: 403 });
+        return HttpResponse.json({ message: 'Forbidden' }, { status: 403 });
       }
 
       const result = db.comment.delete({
