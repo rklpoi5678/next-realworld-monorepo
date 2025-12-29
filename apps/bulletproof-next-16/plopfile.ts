@@ -3,10 +3,10 @@ import { componentGenerator } from './generators/component/index';
 
 /**
  * plop 설정 함수
- * import/no-anonymous-default-export rules 방지하기위헤 'plopfile'이름 부여
+ * import/no-anonymous-default-export rules 방지하기 위헤 'plopfile'이름 부여
  * @param {import('plop').NodePlopAPI} plop
  */
-export default function plopflie(plop: NodePlopAPI): void {
+export default function plopfile(plop: NodePlopAPI): void {
   // 컴포넌트 생성기 등록
   plop.setGenerator('component', componentGenerator);
 
