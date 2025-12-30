@@ -46,7 +46,7 @@ export async function getServerCookie(): Promise<string> {
 }
 
 /** 메인 Fetch API wrapper */
-async function fetchAPI<T>(url: string, options: RequestOptions = {}): Promise<T> {
+async function fetchAPI<T = void>(url: string, options: RequestOptions = {}): Promise<T> {
   const { method = 'GET', headers = {}, body, cookie, params, cache = 'no-store', next } = options;
   let cookieHeader = cookie;
   if (typeof window === 'undefined' && !cookie) {
@@ -89,7 +89,7 @@ async function fetchAPI<T>(url: string, options: RequestOptions = {}): Promise<T
   }
 
   // 204 No Content
-  if (response.status === 204) return {} as T;
+  if (response.status === 204) return undefined as T;
   return response.json();
 }
 
