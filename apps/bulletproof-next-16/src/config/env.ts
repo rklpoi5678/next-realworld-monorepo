@@ -15,7 +15,15 @@ const envSchema = z.object({
 type EnvConfig = z.infer<typeof envSchema>;
 /** 환경 변수 유효성 검사 함수 */
 const createEnv = (): EnvConfig => {
-  const parsedEnv = envSchema.safeParse(process.env);
+  const envVars = {
+    API_URL: process.env.NEXT_PUBLIC_API_URL,
+    ENABLE_API_MOCKING: process.env.NEXT_PUBLIC_ENABLE_API_MOCKING,
+    APP_URL: process.env.APP_URL,
+    APP_MOCK_API_PORT: process.env.APP_MOCK_API_PORT,
+    NODE_ENV: process.env.NODE_ENV,
+  };
+
+  const parsedEnv = envSchema.safeParse(envVars);
 
   if (!parsedEnv.success) {
     const errors = parsedEnv.error.flatten().fieldErrors;
