@@ -26,10 +26,10 @@ const createEnv = (): EnvConfig => {
   const parsedEnv = envSchema.safeParse(envVars);
 
   if (!parsedEnv.success) {
-    const errors = parsedEnv.error.flatten().fieldErrors;
-    const errorMessage = Object.entries(errors)
-      .map(([key, message]) => `- ${key}: ${message?.join(', ')}`)
-      .join('\n');
+    const errorMessage = z.treeifyError(parsedEnv.error)
+
+    console.error("Failed parsedEnv");
+    console.error(errorMessage)
 
     throw new Error(`Invalid environment variables:\n${errorMessage}`);
   }
