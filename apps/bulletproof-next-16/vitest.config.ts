@@ -1,7 +1,14 @@
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
+import { playwright } from '@vitest/browser-playwright';
+const dirname =
+  typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 
+// More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
   plugins: [
     react(),
@@ -18,13 +25,13 @@ export default defineConfig({
     exclude: ['**/node_modules/**', '**/e2e/**', './next/**'],
     // 커버리지 설정
     coverage: {
-      provider: 'v8',  //최신 vitest는 v8을 권장한다.
+      provider: 'v8',
+      //최신 vitest는 v8을 권장한다.
       include: ['src/**'],
       exclude: ['src/**/*.stories.{ts.tsx}', 'src/**/*.test.{ts,tsx}', 'src/testing/**'],
       // 다양한 리포트 형식을 지원하게 설정
       reporter: ['text', 'json', 'html'],
     },
-
     /**  성능 및 기타 최적화 */
     // 병렬 처리 방식 설정
     pool: 'threads',
@@ -33,5 +40,31 @@ export default defineConfig({
       /** @see  https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Operators/import.meta */
       '@/': new URL('./src/', import.meta.url).pathname,
     },
+    projects: [
+      {
+        extends: true,
+        plugins: [
+          // The plugin will run tests for the stories defined in your Storybook config
+          // See options at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon#storybooktest
+          storybookTest({
+            configDir: path.join(dirname, '.storybook'),
+          }),
+        ],
+        test: {
+          name: 'storybook',
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: playwright({}),
+            instances: [
+              {
+                browser: 'chromium',
+              },
+            ],
+          },
+          setupFiles: ['.storybook/vitest.setup.ts'],
+        },
+      },
+    ],
   },
 });
