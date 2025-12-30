@@ -20,7 +20,7 @@ function buildUrlWithParams(url: string, params?: RequestOptions['params']): str
 
   const searchParams = new URLSearchParams();
   Object.entries(params).forEach(([key, val]) => {
-    if (val !== 'undefined' && val !== null) {
+    if (val !== undefined && val !== null) {
       searchParams.append(key, String(val));
     }
   });
