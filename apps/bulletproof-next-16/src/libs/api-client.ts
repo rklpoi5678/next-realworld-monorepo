@@ -53,7 +53,7 @@ async function fetchAPI<T>(url: string, options: RequestOptions = {}): Promise<T
     cookieHeader = await getServerCookie();
   }
 
-  const fullUrl = buildUrlWithParams(`${config.API_URL}`, params);
+  const fullUrl = buildUrlWithParams(`${config.API_URL}${url}`, params);
 
   const response = await fetch(fullUrl, {
     method,
