@@ -22,6 +22,11 @@ export type ApiFnReturnType<FnType extends (...args: never[]) => Promise<unknown
   ReturnType<FnType>
 >;
 
+export type QueryConfig<T extends (...args: never[]) => unknown> = Omit<
+  ReturnType<T>,
+  'queryKey' | 'queryFn'
+>;
+
 /** useMutation의 옵션을 정의할때 사용 */
 export type MutationConfig<MutationFnType extends (...args: never[]) => Promise<unknown>> =
   // TData:성공시 반환하는 데이터
