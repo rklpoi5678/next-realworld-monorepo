@@ -46,3 +46,8 @@ mocked-db.json
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# storybook
+migration-storybook.log
+*storybook.log
+storybook-static
