@@ -9,9 +9,7 @@ export type BaseEntity = {
 };
 
 /** Entity 헬퍼 타입 */
-export type Entity<T> = {
-  [K in keyof T & BaseEntity]: (T & BaseEntity)[K];
-}
+export type Entity<T> = T & BaseEntity;
 
 export type Meta = {
   page: number;
@@ -57,6 +55,6 @@ export type Comment = Entity<{
 
 /** 목록 조회를 위한 공통 래퍼 타입 */
 export type ApiResponse<T> = {
-    data: T;
-    meta?: Meta;
-}
+  data: T;
+  meta?: Meta;
+};
