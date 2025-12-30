@@ -28,7 +28,7 @@ export default defineConfig({
       provider: 'v8',
       //최신 vitest는 v8을 권장한다.
       include: ['src/**'],
-      exclude: ['src/**/*.stories.{ts.tsx}', 'src/**/*.test.{ts,tsx}', 'src/testing/**'],
+      exclude: ['src/**/*.stories.{ts,tsx}', 'src/**/*.test.{ts,tsx}', 'src/testing/**'],
       // 다양한 리포트 형식을 지원하게 설정
       reporter: ['text', 'json', 'html'],
     },
