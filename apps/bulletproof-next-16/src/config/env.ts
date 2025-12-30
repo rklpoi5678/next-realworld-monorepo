@@ -12,23 +12,24 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
 });
 
+type EnvConfig = z.infer<typeof envSchema>;
 /** 환경 변수 유효성 검사 함수 */
-const createEnv = () => {
+const createEnv = (): EnvConfig => {
   const envVars = {
     API_URL: process.env.NEXT_PUBLIC_API_URL,
     ENABLE_API_MOCKING: process.env.NEXT_PUBLIC_ENABLE_API_MOCKING,
-    APP_URL: process.env.NEXT_PUBLIC_URL,
-    APP_MOCK_API_PORT: process.env.NEXT_PUBLIC_MOCK_API_PORT,
+    APP_URL: process.env.APP_URL,
+    APP_MOCK_API_PORT: process.env.APP_MOCK_API_PORT,
     NODE_ENV: process.env.NODE_ENV,
   };
 
   const parsedEnv = envSchema.safeParse(envVars);
 
   if (!parsedEnv.success) {
-    const errors = parsedEnv.error.flatten().fieldErrors;
-    const errorMessage = Object.entries(errors)
-      .map(([key, message]) => `- ${key}: ${message?.join(', ')}`)
-      .join('\n');
+    const errorMessage = z.treeifyError(parsedEnv.error)
+
+    console.error("Failed parsedEnv");
+    console.error(errorMessage)
 
     throw new Error(`Invalid environment variables:\n${errorMessage}`);
   }
@@ -37,7 +38,7 @@ const createEnv = () => {
 };
 
 //singleton
-export const env = createEnv();
+export const config = createEnv();
 
 //type export
 export type Env = z.infer<typeof envSchema>;
