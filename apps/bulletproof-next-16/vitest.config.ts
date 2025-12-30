@@ -35,11 +35,11 @@ export default defineConfig({
     /**  성능 및 기타 최적화 */
     // 병렬 처리 방식 설정
     pool: 'threads',
-    alias: {
-      // tsconfigPaths가 해결해주지만, 명시적으로 필요한 경우 추가합시다.
-      /** @see  https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Operators/import.meta */
-      '@/': new URL('./src/', import.meta.url).pathname,
-    },
+    // alias: {
+    //   // tsconfigPaths가 해결해주지만, 명시적으로 필요한 경우 추가합시다.
+    //   /** @see  https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Operators/import.meta */
+    //   '@/': new URL('./src/', import.meta.url).pathname,
+    // },
     projects: [
       {
         extends: true,
