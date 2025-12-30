@@ -35,11 +35,13 @@ export const buttonVariants = cva(
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
+  extends
+    Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'ref'>,
+    VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   isLoading?: boolean;
   icon?: React.ReactNode;
-  ref?: React.Ref<HTMLButtonElement>
+  ref?: React.Ref<HTMLButtonElement>;
 }
 
 /** React19에서는 forwardRef 없이 props에서 바로 ref추출가능 */
@@ -54,7 +56,7 @@ export const Button = ({
   ref,
   ...props
 }: ButtonProps) => {
-    /** @see  https://www.radix-ui.com/primitives/docs/utilities/slot*/
+  /** @see  https://www.radix-ui.com/primitives/docs/utilities/slot*/
   const Comp = asChild ? Slot : 'button';
 
   return (
@@ -64,10 +66,10 @@ export const Button = ({
       disabled={isLoading || props.disabled}
       {...props}
     >
-        {isLoading && <Spinner size='sm' className='text-current'/>}
-        {!isLoading && icon && <span className='mr-2'>{icon}</span>}
+      {isLoading && <Spinner size="sm" className="text-current" />}
+      {!isLoading && icon && <span className="mr-2">{icon}</span>}
 
-        {children && <span>{children}</span>}
+      {children && <span>{children}</span>}
     </Comp>
   );
 };
