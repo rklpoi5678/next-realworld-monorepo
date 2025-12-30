@@ -1,3 +1,6 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import storybook from "eslint-plugin-storybook";
+
 import { defineConfig, globalIgnores } from 'eslint/config';
 import nextVitals from 'eslint-config-next/core-web-vitals';
 import nextTs from 'eslint-config-next/typescript';
@@ -73,6 +76,7 @@ const eslintConfig = defineConfig([
     '.next/**',
     'out/**',
     'build/**',
+    'storybook-static/**',
     'next-env.d.ts',
     'node_modules/**',
     'public/mockServiceWorker.js',
@@ -81,6 +85,7 @@ const eslintConfig = defineConfig([
   // next.js 및 TS 기본 설정 확장
   ...nextVitals,
   ...nextTs,
+  ...storybook.configs['flat/recommended'],
   // 사용자 정의 규칙 레이어
   checkFileRules,
   architectureRules
