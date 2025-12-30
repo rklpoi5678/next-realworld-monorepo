@@ -26,7 +26,7 @@ export type User = Entity<{
   email: string;
   role: UserRole;
   teamId: string;
-  bio: string;
+  bio?: string;
 }>;
 
 export type AuthResponse = {
