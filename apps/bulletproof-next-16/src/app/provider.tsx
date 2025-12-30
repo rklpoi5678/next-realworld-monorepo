@@ -27,7 +27,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     // 에러 바운티로 전체 앱의 런타임 에러 포착
     <ErrorBoundary FallbackComponent={MainErrorFallback}>
       <QueryClientProvider client={queryClient}>
-        {config.NODE_ENV === 'development' && 'test' && (
+        {(config.NODE_ENV === 'development' || config.NODE_ENV === 'test') && (
           <ReactQueryDevtools initialIsOpen={false} />
         )}
         {/* 전역 알림 */}
