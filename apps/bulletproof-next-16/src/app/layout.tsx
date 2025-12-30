@@ -1,10 +1,13 @@
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import type { Metadata } from 'next';
-
 import './globals.css';
+import { Inter } from 'next/font/google';
+
 import { getUserQueryOptions } from '@/libs/auth';
 
 import { AppProvider } from './provider';
+
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Bulletproof Next',
@@ -45,7 +48,7 @@ export default async function RootLayout({
   const dehydratedState = dehydrate(queryClient);
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={inter.className} suppressHydrationWarning>
       <body className={'antialiased'}>
         <AppProvider>
           <HydrationBoundary state={dehydratedState}>{children}</HydrationBoundary>
