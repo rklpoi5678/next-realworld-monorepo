@@ -12,7 +12,7 @@ const dirname =
 export default defineConfig({
   plugins: [
     react(),
-    // Next.js의 @/* 경로를로르 인식시키기 위해 필수 Paths
+    // Next.js의 @/* 경로를 인식시키기 위해 필수 Paths
     tsconfigPaths(),
   ],
   test: {
@@ -21,7 +21,7 @@ export default defineConfig({
     // React 19 및 브라우저 환경 시뮬레이션을 위한 설정
     environment: 'jsdom',
     // 테스트 시작 전 초기화 스크립트
-    setupFiles: '../src/testing/setup-tests.ts',
+    setupFiles: './src/testing/setup-tests.ts',
     exclude: ['**/node_modules/**', '**/e2e/**', './next/**'],
     // 커버리지 설정
     coverage: {
