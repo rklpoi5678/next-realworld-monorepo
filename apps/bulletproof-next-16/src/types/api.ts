@@ -39,18 +39,21 @@ export type Team = Entity<{
   description: string;
 }>;
 
+/** author 타입 불일치 총필드 8개에서 필요한 필드를 Pick */
+export type UserSummary = Pick<User, 'id' | 'firstName' | 'lastName' | 'role'>;
+
 export type Discussion = Entity<{
   title: string;
   body: string;
   teamId: string;
-  author: User;
+  author: UserSummary;
   public: boolean;
 }>;
 
 export type Comment = Entity<{
   body: string;
   discussionId: string;
-  author: User;
+  author: UserSummary;
 }>;
 
 /** 목록 조회를 위한 공통 래퍼 타입 */
