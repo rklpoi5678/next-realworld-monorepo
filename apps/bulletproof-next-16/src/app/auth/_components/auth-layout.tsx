@@ -22,8 +22,14 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
   // 로그인된 상태라면 대시보드/ 리다이렉트 경로로 이동시킨다.
   useEffect(() => {
     if (user.data) {
-      const destination = redirectTo ? decodeURIComponent(redirectTo) : paths.app.root.getHref();
-
+      let destination = paths.app.root.getHref();
+      if (redirectTo) {
+        const decoded = decodeURIComponent(redirectTo);
+        // 상대 경로만 허용 외부 URL 리다이렉트 방지
+        if (decoded.startsWith('/') && !decoded.startsWith('//')) {
+          destination = decoded;
+        }
+      }
       router.replace(destination);
     }
   }, [user.data, router, redirectTo]);
