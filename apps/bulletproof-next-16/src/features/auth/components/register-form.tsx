@@ -73,7 +73,7 @@ export const RegisterForm = ({
                 } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2`}
                 id="choose-team"
               />
-              <Label htmlFor="airplane-mode">Join Existing Team</Label>
+              <Label htmlFor="choose-team">Join Existing Team</Label>
             </div>
 
             {chooseTeam && teams ? (

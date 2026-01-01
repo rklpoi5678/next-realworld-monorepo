@@ -31,7 +31,7 @@ export async function getServerCookie(): Promise<string> {
   if (typeof window !== 'undefined') return '';
 
   try {
-    // 서버 전용 모듈을 동적으로 기져온다. (빌드 타임 클라이언트 번들 제외)
+    // 서버 전용 모듈을 동적으로 가져온다. (빌드 타임 클라이언트 번들 제외)
     const { cookies }  = await import('next/headers')
     const cookieStore = await cookies();
     return cookieStore

@@ -68,7 +68,7 @@ export const AsFormDrawer: Story = {
   render: () => (
     <FormDrawer
       triggerButton={<Button>Open Form</Button>}
-      isDone={true}
+      isDone={false}
       title="My Form"
       submitButton={
         <Button form="my-form" type="submit">

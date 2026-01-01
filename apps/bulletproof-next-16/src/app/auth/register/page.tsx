@@ -23,7 +23,13 @@ function RegisterPageContent() {
   });
 
   const handleSuccess = () => {
-    const targetPath = redirectTo ? decodeURIComponent(redirectTo) : paths.app.dashboard.getHref();
+    let targetPath = paths.app.dashboard.getHref();
+    if (redirectTo) {
+      const decoded = decodeURIComponent(redirectTo);
+      if (decoded.startsWith('/app') || decoded.startsWith('/public')) {
+        targetPath = decoded;
+      }
+    }
     router.replace(targetPath);
   };
 
