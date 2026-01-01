@@ -10,14 +10,14 @@ import {
   FieldPath,
   FieldValues,
   FormProvider,
+  Resolver,
   SubmitHandler,
   UseFormProps,
   UseFormReturn,
   useForm,
   useFormContext,
-  Resolver
 } from 'react-hook-form';
-import { z } from 'zod';
+import { type ZodType, z } from 'zod';
 
 import { cn } from '@/libs/utils/cn';
 
@@ -30,7 +30,9 @@ type FormFieldContextValue<
   name: TName;
 };
 
-const FormFieldContext = React.createContext<FormFieldContextValue>({} as FormFieldContextValue);
+const FormFieldContext = React.createContext<FormFieldContextValue>(
+  {} as FormFieldContextValue,
+);
 
 const FormField = <
   TFieldValues extends FieldValues,
@@ -72,19 +74,22 @@ type FormItemContextValue = {
   id: string;
 };
 
-const FormItemContext = React.createContext<FormItemContextValue>({} as FormItemContextValue);
-
-const FormItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => {
-    const id = React.useId();
-
-    return (
-      <FormItemContext.Provider value={{ id }}>
-        <div ref={ref} className={cn('space-y-2', className)} {...props} />
-      </FormItemContext.Provider>
-    );
-  },
+const FormItemContext = React.createContext<FormItemContextValue>(
+  {} as FormItemContextValue,
 );
+
+const FormItem = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => {
+  const id = React.useId();
+
+  return (
+    <FormItemContext.Provider value={{ id }}>
+      <div ref={ref} className={cn('space-y-2', className)} {...props} />
+    </FormItemContext.Provider>
+  );
+});
 FormItem.displayName = 'FormItem';
 
 const FormLabel = React.forwardRef<
@@ -108,13 +113,18 @@ const FormControl = React.forwardRef<
   React.ElementRef<typeof Slot>,
   React.ComponentPropsWithoutRef<typeof Slot>
 >(({ ...props }, ref) => {
-  const { error, formItemId, formDescriptionId, formMessageId } = useFormField();
+  const { error, formItemId, formDescriptionId, formMessageId } =
+    useFormField();
 
   return (
     <Slot
       ref={ref}
       id={formItemId}
-      aria-describedby={!error ? `${formDescriptionId}` : `${formDescriptionId} ${formMessageId}`}
+      aria-describedby={
+        !error
+          ? `${formDescriptionId}`
+          : `${formDescriptionId} ${formMessageId}`
+      }
       aria-invalid={!!error}
       {...props}
     />
@@ -163,27 +173,35 @@ const FormMessage = React.forwardRef<
 });
 FormMessage.displayName = 'FormMessage';
 
-type FormProps<TFormValues extends FieldValues> = {
+type FormProps<TFormValues extends FieldValues, Schema> = {
   onSubmit: SubmitHandler<TFormValues>;
-  schema: z.ZodSchema<TFormValues,z.ZodType>;
+  schema: Schema;
   className?: string;
   children: (methods: UseFormReturn<TFormValues>) => React.ReactNode;
   options?: UseFormProps<TFormValues>;
   id?: string;
 };
 
-const Form = <TFormValues extends FieldValues>({
+const Form = <
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Schema extends ZodType<any, any, any>,
+  TFormValues extends FieldValues = z.infer<Schema>,
+>({
   onSubmit,
   children,
   className,
   options,
   id,
   schema,
-}: FormProps<TFormValues>) => {
-  const form = useForm<TFormValues>({ ...options, resolver: zodResolver(schema) as unknown as Resolver<TFormValues> });
+}: FormProps<TFormValues, Schema>) => {
+  const form = useForm({ ...options, resolver: zodResolver(schema) as unknown as Resolver<TFormValues>});
   return (
     <FormProvider {...form}>
-      <form className={cn('space-y-6', className)} onSubmit={form.handleSubmit(onSubmit)} id={id}>
+      <form
+        className={cn('space-y-6', className)}
+        onSubmit={form.handleSubmit(onSubmit)}
+        id={id}
+      >
         {children(form)}
       </form>
     </FormProvider>
