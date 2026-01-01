@@ -17,16 +17,23 @@ export function useDisclosure(options: UseDisclosureOptions = {}) {
 
   const [isOpen, setIsOpen] = useState(initial);
 
+  //  queueMicrotask: 상태 변경 직후, 브라우저가 다음일을 하기 전 찰나에
+  // onOpen 콜백을 실행하여  상태 업데이트이 외부 로직 사이의 충돌을 방지
   const open = () => {
     setIsOpen((prev) => {
-      if (!prev && onOpen) onOpen();
+      if (!prev) {
+        // 이미 열려있지 않을때만 실행 (불필요한 실행방지)
+        queueMicrotask(() => onOpen?.());
+      }
       return true;
     });
   };
 
   const close = () => {
     setIsOpen((prev) => {
-      if (prev && onClose) onClose();
+      if (prev) {
+        queueMicrotask(() => onClose?.());
+      }
       return false;
     });
   };
@@ -34,8 +41,10 @@ export function useDisclosure(options: UseDisclosureOptions = {}) {
   const toggle = () => {
     setIsOpen((prev) => {
       const next = !prev;
-      if (next && onOpen) onOpen();
-      if (!next && onClose) onClose();
+      queueMicrotask(() => {
+        if (next) onOpen?.();
+        else onClose?.();
+      });
       return next;
     });
   };
