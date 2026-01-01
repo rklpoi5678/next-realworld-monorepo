@@ -48,7 +48,7 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
             />
             <Input
               type="password"
-              label="비메일번호"
+              label="비일번호"
               error={formState.errors['password']}
               registration={register('password')}
               placeholder="••••••••"
