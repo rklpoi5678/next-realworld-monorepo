@@ -9,7 +9,7 @@ import { FieldWrapper, FieldWrapperPassThroughProps } from './field-wrapper';
 
 type Option = {
   label: React.ReactNode;
-  value: string | number | string[];
+  value: string | number;
 };
 
 type SelectFieldProps = FieldWrapperPassThroughProps & {
