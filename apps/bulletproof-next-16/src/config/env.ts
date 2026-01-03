@@ -18,18 +18,18 @@ const createEnv = (): EnvConfig => {
   const envVars = {
     API_URL: process.env.NEXT_PUBLIC_API_URL,
     ENABLE_API_MOCKING: process.env.NEXT_PUBLIC_ENABLE_API_MOCKING,
-    APP_URL: process.env.APP_URL,
-    APP_MOCK_API_PORT: process.env.APP_MOCK_API_PORT,
+    APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    APP_MOCK_API_PORT: process.env.NEXT_PUBLIC_APP_MOCK_API_PORT,
     NODE_ENV: process.env.NODE_ENV,
   };
 
   const parsedEnv = envSchema.safeParse(envVars);
 
   if (!parsedEnv.success) {
-    const errorMessage = z.treeifyError(parsedEnv.error)
+    const errorMessage = z.flattenError(parsedEnv.error);
 
-    console.error("Failed parsedEnv");
-    console.error(errorMessage)
+    console.error('Failed parsedEnv');
+    console.error(errorMessage);
 
     throw new Error(`Invalid environment variables:\n${errorMessage}`);
   }
@@ -38,7 +38,7 @@ const createEnv = (): EnvConfig => {
 };
 
 //singleton
-export const config = createEnv();
+export const env = createEnv();
 
 //type export
 export type Env = z.infer<typeof envSchema>;

@@ -1,5 +1,4 @@
-export * from './notifications';
-export * from './notifications-store'
+export * from './dropdown';
 // 참고: Handlebars의 properCase 대신 pascalCase 헬퍼를 사용하는 것이 권장됨
 // 컴포넌트 이름은 PascalCase로 변환됨 (예: my-button → MyButton)
 
