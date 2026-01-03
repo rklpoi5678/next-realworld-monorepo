@@ -2,9 +2,13 @@ import { keepPreviousData, queryOptions, useQuery } from '@tanstack/react-query'
 
 import { api } from '@/libs/api-client';
 import { QueryConfig } from '@/libs/react-query';
+import { Discussion, Meta } from '@/types/api';
 
 /** API  Func */
-export const getDiscussions = ({ page = 1 }: { page?: number } = {}) => {
+export const getDiscussions = ({ page = 1 }: { page?: number } = {}): Promise<{
+  data: Discussion[];
+  meta: Meta;
+}> => {
   return api.get('/discussions', {
     params: { page },
   });
@@ -13,7 +17,7 @@ export const getDiscussions = ({ page = 1 }: { page?: number } = {}) => {
 /** Query Options */
 export const getDiscussionsQueryOptions = ({ page = 1 }: { page?: number } = {}) => {
   return queryOptions({
-    queryKey: ['discussion', { page }],
+    queryKey: ['discussions', { page }],
     queryFn: () => getDiscussions({ page }),
   });
 };
