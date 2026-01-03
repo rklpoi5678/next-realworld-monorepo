@@ -82,20 +82,22 @@ export const WithRadioItems = () => {
 };
 
 export const WIthSubmenus = () => {
-  <DropdownMenu>
-    <DropdownMenuTrigger>
-      <Button>Open Menu</Button>
-    </DropdownMenuTrigger>
-    <DropdownMenuContent>
-      <DropdownMenuItem>Item One</DropdownMenuItem>
-      <DropdownMenuSub>
-        <DropdownMenuSubTrigger>More Options</DropdownMenuSubTrigger>
-        <DropdownMenuSubContent>
-          <DropdownMenuItem>Sub Item One</DropdownMenuItem>
-          <DropdownMenuItem>Sub Item Two</DropdownMenuItem>
-        </DropdownMenuSubContent>
-      </DropdownMenuSub>
-      <DropdownMenuItem>Item Three</DropdownMenuItem>
-    </DropdownMenuContent>
-  </DropdownMenu>;
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger>
+        <Button>Open Menu</Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuItem>Item One</DropdownMenuItem>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>More Options</DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            <DropdownMenuItem>Sub Item One</DropdownMenuItem>
+            <DropdownMenuItem>Sub Item Two</DropdownMenuItem>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+        <DropdownMenuItem>Item Three</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 };
