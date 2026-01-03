@@ -2,7 +2,7 @@ export type ErrorProps = {
   errorMessage?: string | null;
 };
 
-export const FieldError = ({ errorMessage }: ErrorProps) => {
+export const FieldErrors = ({ errorMessage }: ErrorProps) => {
   if (!errorMessage) return null;
 
   return (
