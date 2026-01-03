@@ -76,7 +76,7 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
             href={paths.auth.register.getHref(redirectTo ?? undefined)}
             className="font-semibold text-primary hover:underline hover:underline-offset-4"
           >
-            register
+            Register
           </NextLink>
         </div>
       </div>
