@@ -41,14 +41,14 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
           <div className="space-y-4">
             <Input
               type="email"
-              label="이메일 주소"
+              label="email"
               error={formState.errors['email']}
               registration={register('email')}
               placeholder="example@email.com"
             />
             <Input
               type="password"
-              label="비일번호"
+              label="password"
               error={formState.errors['password']}
               registration={register('password')}
               placeholder="••••••••"
@@ -62,7 +62,7 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
                 className="w-full"
                 size="lg"
               >
-                로그인
+                login
               </Button>
             </div>
           </div>
@@ -71,12 +71,12 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
 
       <div className="flex items-center justify-center border-t border-border pt-4">
         <div className="text-sm">
-          <span className="text-muted-foreground">계정이 없으신가요? </span>
+          <span className="text-muted-foreground"> </span>
           <NextLink
             href={paths.auth.register.getHref(redirectTo ?? undefined)}
             className="font-semibold text-primary hover:underline hover:underline-offset-4"
           >
-            회원가입
+            register
           </NextLink>
         </div>
       </div>
