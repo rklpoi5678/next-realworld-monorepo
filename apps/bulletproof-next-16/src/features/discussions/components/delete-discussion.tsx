@@ -32,7 +32,11 @@ export const DeleteDiscussion = ({ id }: DeleteDiscussionProps) => {
     return null;
   }
 
-  if (!policies['discussion:delete'](user?.data)) {
+  if (!user.data) {
+    return null;
+  }
+
+  if (!policies['discussion:delete'](user.data)) {
     return null;
   }
 
