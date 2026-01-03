@@ -8,7 +8,7 @@ const envSchema = z.object({
     .default('false')
     .transform((val) => val === 'true'),
   APP_URL: z.string().optional().default('http://localhost:3000'),
-  APP_MOCK_API_PORT: z.number().optional().default(8080),
+  APP_MOCK_API_PORT: z.string().optional().default('8080'),
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
 });
 
