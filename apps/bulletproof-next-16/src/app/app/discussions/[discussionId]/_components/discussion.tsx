@@ -4,6 +4,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 
 import { ContentLayout } from '@/components/layout/content-layout';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import { useDiscussion } from '@/features/discussions/api/get-discussion';
 
 export const Discussion = ({ discussionId }: { discussionId: string }) => {
@@ -15,6 +16,16 @@ export const Discussion = ({ discussionId }: { discussionId: string }) => {
       <ContentLayout title="error">
         <div className="text-center py-12">
           <p>Failed to load discussion: {error?.message || 'Unknown error'}</p>
+        </div>
+      </ContentLayout>
+    );
+  }
+
+  if (isPending) {
+    return (
+      <ContentLayout title="Loading...">
+        <div className="flex h-48 w-full items-center justify-center">
+          <Spinner size="lg" />
         </div>
       </ContentLayout>
     );
