@@ -16,6 +16,10 @@ const rootDir = __dirname
 
 // Next.js 앱을 위한 설정
 // nextConfigFn을 앱 경로(appDir)로 호출하고,
+
+/**
+ *  자식 앱내 에서 설정을 유연하게 할수있게 변경하였습니다.
+ */
 // 'files' 속성을 추가하여 이 설정이 오직 해당 앱에만 적용되도록 제한
 // const nextAppConfig = nextConfigFn(appDir).map((config) => ({
 //   ...config,
