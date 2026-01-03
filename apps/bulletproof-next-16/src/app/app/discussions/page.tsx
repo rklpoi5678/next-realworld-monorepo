@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default async function DiscussionPage({
   searchParams,
 }: {
-  searchParams: { page: string | null };
+  searchParams: Promise<{ page?: string }>;
 }) {
   const resolvedSearchParams = await searchParams;
   const page =
