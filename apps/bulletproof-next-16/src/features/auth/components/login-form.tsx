@@ -41,14 +41,14 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
           <div className="space-y-4">
             <Input
               type="email"
-              label="email"
+              label="Email"
               error={formState.errors['email']}
               registration={register('email')}
               placeholder="example@email.com"
             />
             <Input
               type="password"
-              label="password"
+              label="Password"
               error={formState.errors['password']}
               registration={register('password')}
               placeholder="••••••••"
