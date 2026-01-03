@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "dotenv -e ./env/.env.development -- next dev",
-    "build": "dotenv -e ./env/.env.development  -- build",
+    "build": "dotenv -e ./env/.env.development  -- next build",
     "start": "next start",
     "lint": "eslint",
     "prepare": "husky",
