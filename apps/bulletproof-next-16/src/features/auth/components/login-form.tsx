@@ -62,7 +62,7 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
                 className="w-full"
                 size="lg"
               >
-                login
+                Login
               </Button>
             </div>
           </div>
