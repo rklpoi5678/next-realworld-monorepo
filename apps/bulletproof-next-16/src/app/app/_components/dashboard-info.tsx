@@ -8,7 +8,7 @@ export function DashboardInfo() {
   if (!user) return null;
 
   const { firstName, lastName, role } = user;
-  const fullName = `${firstName}${lastName}`;
+  const fullName = `${firstName} ${lastName}`;
 
   return (
     <>
