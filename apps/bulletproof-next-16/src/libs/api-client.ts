@@ -1,5 +1,5 @@
 import { useNotifications } from '@/components/ui/notifications/notifications-store';
-import { config } from '@/config/env';
+import { env } from '@/config/env';
 
 type RequestOptions = {
   method?: string;
@@ -32,7 +32,7 @@ export async function getServerCookie(): Promise<string> {
 
   try {
     // 서버 전용 모듈을 동적으로 가져온다. (빌드 타임 클라이언트 번들 제외)
-    const { cookies }  = await import('next/headers')
+    const { cookies } = await import('next/headers');
     const cookieStore = await cookies();
     return cookieStore
       .getAll()
@@ -52,7 +52,7 @@ async function fetchAPI<T = void>(url: string, options: RequestOptions = {}): Pr
     cookieHeader = await getServerCookie();
   }
 
-  const fullUrl = buildUrlWithParams(`${config.API_URL}${url}`, params);
+  const fullUrl = buildUrlWithParams(`${env.API_URL}${url}`, params);
 
   const response = await fetch(fullUrl, {
     method,
