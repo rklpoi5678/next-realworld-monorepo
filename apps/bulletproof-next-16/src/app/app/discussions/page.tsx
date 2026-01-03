@@ -16,7 +16,8 @@ export default async function DiscussionPage({
   searchParams: { page: string | null };
 }) {
   const resolvedSearchParams = await searchParams;
-  const page = typeof resolvedSearchParams.page === 'string' ? Number(resolvedSearchParams) : 1;
+  const page =
+    typeof resolvedSearchParams.page === 'string' ? Number(resolvedSearchParams.page) : 1;
 
   const queryClient = new QueryClient({
     defaultOptions: {
