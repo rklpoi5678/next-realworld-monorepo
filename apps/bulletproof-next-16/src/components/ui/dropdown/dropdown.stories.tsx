@@ -81,7 +81,7 @@ export const WithRadioItems = () => {
   );
 };
 
-export const WIthSubmenus = () => {
+export const WithSubmenus = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
