@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "dotenv -e ./env/.env.development -- next dev",
+    "build": "dotenv -e ./env/.env.development  -- build",
     "start": "next start",
     "lint": "eslint",
     "prepare": "husky",
@@ -64,6 +64,7 @@
     "@vitest/coverage-v8": "^4.0.16",
     "babel-plugin-react-compiler": "1.0.0",
     "cors": "^2.8.5",
+    "dotenv-cli": "^11.0.0",
     "eslint": "^9.39.2",
     "eslint-config-next": "16.1.1",
     "eslint-config-prettier": "^10.1.8",
