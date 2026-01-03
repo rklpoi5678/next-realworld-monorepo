@@ -1,6 +1,7 @@
 'use client';
 import DOMPurify from 'isomorphic-dompurify';
 import { parse } from 'marked';
+import { useMemo } from 'react';
 
 export type MdPreviewProps = {
   value: string;
@@ -8,16 +9,15 @@ export type MdPreviewProps = {
 
 export const MdPreview = ({ value = '' }: MdPreviewProps) => {
   // value가 변경 될때만 마크다운을 HTML로 변환하고 보안 검사를 수행
-  let sanitizedHtml = '';
-
-  try {
-    const rawHtml = parse(value) as string;
-    sanitizedHtml = DOMPurify.sanitize(rawHtml);
-  } catch (error) {
-    console.error('Markdown  parsing error:', error);
-    sanitizedHtml = '';
-  }
-
+  const sanitizedHtml = useMemo(() => {
+    try {
+      const rawHtml = parse(value) as string;
+      return DOMPurify.sanitize(rawHtml);
+    } catch (error) {
+      console.error('Markdown parsing error:', error);
+      return '';
+    }
+  }, [value]);
   return (
     <div
       // 참고로 prose는 @tailwindcss/typography플러그인이 제공하는 클래스하
