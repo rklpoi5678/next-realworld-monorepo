@@ -7,7 +7,18 @@ import { Button } from '@/components/ui/button';
 import { useDiscussion } from '@/features/discussions/api/get-discussion';
 
 export const Discussion = ({ discussionId }: { discussionId: string }) => {
-  const { data: discussion, isPending } = useDiscussion({ discussionId });
+  const { data: discussion, isPending, isError, error } = useDiscussion({ discussionId });
+
+  // 네트워크 오류와 같은 에러
+  if (isError) {
+    return (
+      <ContentLayout title="error">
+        <div className="text-center py-12">
+          <p>Failed to load discussion: {error?.message || 'Unknown error'}</p>
+        </div>
+      </ContentLayout>
+    );
+  }
 
   if (!discussion?.data && !isPending) {
     return (
