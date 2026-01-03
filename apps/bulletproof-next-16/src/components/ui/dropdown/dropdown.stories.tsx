@@ -24,17 +24,19 @@ const meta: Meta = {
 export default meta;
 
 export const Default = () => {
-  <DropdownMenu>
-    <DropdownMenuTrigger asChild>
-      <Button>Open Menu</Button>
-    </DropdownMenuTrigger>
-    <DropdownMenuContent>
-      <DropdownMenuItem>Item One</DropdownMenuItem>
-      <DropdownMenuItem>Item Two</DropdownMenuItem>
-      <DropdownMenuSeparator />
-      <DropdownMenuItem>Item Three</DropdownMenuItem>
-    </DropdownMenuContent>
-  </DropdownMenu>;
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button>Open Menu</Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuItem>Item One</DropdownMenuItem>
+        <DropdownMenuItem>Item Two</DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem>Item Three</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 };
 
 export const WithCheckboxItems = () => {
