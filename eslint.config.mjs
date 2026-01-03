@@ -17,10 +17,10 @@ const rootDir = __dirname
 // Next.js 앱을 위한 설정
 // nextConfigFn을 앱 경로(appDir)로 호출하고,
 // 'files' 속성을 추가하여 이 설정이 오직 해당 앱에만 적용되도록 제한
-const nextAppConfig = nextConfigFn(appDir).map((config) => ({
-  ...config,
-  files: ['apps/nextjs-typescript-realworld/**/*.{js,jsx,ts,tsx}'],
-}))
+// const nextAppConfig = nextConfigFn(appDir).map((config) => ({
+//   ...config,
+//   files: ['apps/nextjs-typescript-realworld/**/*.{js,jsx,ts,tsx}'],
+// }))
 
 // packages/eslint-config 설정
 const eslintPackageConfig = baseConfigFn(eslintConfigPackageDir).map((config) => ({
@@ -43,10 +43,11 @@ const eslintConfig = defineConfig([
     '**/build/**',
     '**/out/**',
     'apps/nextjs-typescript-realworld/.next/**', // 명시적 무시
+    'apps/nextjs-typescript-realworld/**'
   ]),
 
   // 라우팅된 설정 적용
-  ...nextAppConfig, // Next.js 앱 파일에 적용
+  // ...nextAppConfig, // Next.js 앱 파일에 적용
   ...eslintPackageConfig, // eslint-config 패키지 파일에 적용
   ...rootFilesConfig, // 루트 파일에 적용
 ])
