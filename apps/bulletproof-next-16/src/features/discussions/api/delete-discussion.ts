@@ -27,7 +27,7 @@ export const useDeleteDiscussion = ({ mutationConfig }: UseDeleteDiscussionOptio
       // getDiscussionsQueryOptions().queryKey는 ['discussions']를 포함하므로
       // 모든 페이지의 목록 캐시가 갱신
       queryClient.invalidateQueries({
-        queryKey: getDiscussionsQueryOptions().queryKey,
+        queryKey: ['discussions'],
       });
 
       // 추가로 정의된 onSuccess 콜백 실행 (예: 알림 표시, 페이지 이동 등)
