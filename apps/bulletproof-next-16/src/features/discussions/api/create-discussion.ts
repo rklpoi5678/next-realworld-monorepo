@@ -37,7 +37,7 @@ export const useCreateDiscussion = ({ mutationConfig }: UseCreateDiscussionOptio
     onSuccess: (...args) => {
       // invalidate: Discussions list를 최신 상태로 갱신
       queryClient.invalidateQueries({
-        queryKey: getDiscussionsQueryOptions().queryKey,
+        queryKey: ['discussions'],
       });
       // User가 전달한 추가 onSuccess Callback 실행
       onSuccess?.(...args);
