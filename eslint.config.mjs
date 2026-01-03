@@ -47,6 +47,7 @@ const eslintConfig = defineConfig([
     '**/build/**',
     '**/out/**',
     'apps/nextjs-typescript-realworld/.next/**', // 명시적 무시
+    // 학습용일경우에 한해 자식 앱에 유연하게 하기 위함이며 추후 앱 루트에 eslint를 사용하지 않는 방향으로 가기로 하였습니다..
     'apps/nextjs-typescript-realworld/**'
   ]),
 
