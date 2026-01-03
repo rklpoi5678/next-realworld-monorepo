@@ -71,7 +71,7 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
 
       <div className="flex items-center justify-center border-t border-border pt-4">
         <div className="text-sm">
-          <span className="text-muted-foreground">Don't have an account?</span>
+          <span className="text-muted-foreground">{"Don't have an account?"}</span>
           <NextLink
             href={paths.auth.register.getHref(redirectTo ?? undefined)}
             className="font-semibold text-primary hover:underline hover:underline-offset-4"
