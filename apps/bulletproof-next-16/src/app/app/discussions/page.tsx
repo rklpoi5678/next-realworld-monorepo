@@ -16,8 +16,9 @@ export default async function DiscussionPage({
   searchParams: Promise<{ page?: string }>;
 }) {
   const resolvedSearchParams = await searchParams;
-  const page =
+  const parsedPage =
     typeof resolvedSearchParams.page === 'string' ? Number(resolvedSearchParams.page) : 1;
+  const page = Number.isNaN(parsedPage) ? 1 : parsedPage;
 
   const queryClient = new QueryClient({
     defaultOptions: {
