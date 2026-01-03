@@ -10,7 +10,6 @@ import { policies } from '@/libs/authorization';
 
 import { useDeleteDiscussion } from '../api/delete-discussion';
 
-
 type DeleteDiscussionProps = {
   id: string;
 };
@@ -28,6 +27,10 @@ export const DeleteDiscussion = ({ id }: DeleteDiscussionProps) => {
       },
     },
   });
+
+  if (user.isPending) {
+    return null;
+  }
 
   if (!policies['discussion:delete'](user?.data)) {
     return null;
