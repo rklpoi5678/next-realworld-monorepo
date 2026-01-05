@@ -20,7 +20,7 @@ export const createComment = ({ data }: { data: CreateCommentInput }): Promise<C
 
 type UseCreateCommentOptions = {
   discussionId: string;
-  mutationConfig: MutationConfig<typeof createComment>;
+  mutationConfig?: MutationConfig<typeof createComment>;
 };
 
 export const useCreateComment = ({ discussionId, mutationConfig }: UseCreateCommentOptions) => {
