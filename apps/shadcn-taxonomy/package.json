@@ -16,7 +16,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "prepare": "husky"
+    "prepare": "if [\"$NODE_ENV\"!= \"production\"]; then husky; fi"
   },
   "dependencies": {
     "next": "16.1.1",
