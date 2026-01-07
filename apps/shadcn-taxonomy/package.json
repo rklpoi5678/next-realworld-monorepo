@@ -16,6 +16,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "lint:fix": "eslint --fix --max-warnings=0",
     "prepare": "if [\"$NODE_ENV\"!= \"production\"]; then husky; fi"
   },
   "dependencies": {
