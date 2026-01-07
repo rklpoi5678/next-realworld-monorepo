@@ -11,8 +11,15 @@
     "format": "pnpm prettier --write \"**/*.{ts,tsx,md}\"",
     "prepare": "husky",
     "dev": "turbo run dev",
-    "build": "turbo run build",
-    "lint-staged": "eslint --fix --max-warnings=0"
+    "build": "turbo run build"
+  },
+  "lint-staged": {
+    "apps/shadcn-taxonomy/**/*.{js,jsx,ts,tsx}" : [
+      "pnpm --filter shadcn-taxonomy lint:fix"
+    ],
+  "apps/bulletproof-next-16/**/*.{js,jsx,ts,tsx}" : [
+      "pnpm --filter bulletproof lint"
+    ]
   },
   "packageManager": "pnpm@10.18.1",
   "engines": {
@@ -34,6 +41,7 @@
     "@eslint/eslintrc": "^3.3.1",
     "@packages/eslint-config": "workspace:*",
     "@packages/tsconfig": "workspace:*",
+    "@commitlint/config-conventional": "^20.3.0",
     "@types/eslint": "^9.6.1",
     "@types/eslint__js": "^8.42.3",
     "@types/node": "^20.19.24",
