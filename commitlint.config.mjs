@@ -12,7 +12,7 @@ const config = {
    * Level: 0 (끄기), 1 (경고), 2 (에러 - 커밋 차단)
    * Applicability: 'always' (항상 적용), 'never' (반대로 적용)
    */
-rules: {
+  rules: {
     // 커밋 메시지의 '타입(Type)'으로 사용할 수 있는 단어들을 제한합니다. (기본 소문자로 컨밴션)
     'type-enum': [
       2,                            // 에러 레벨 (규칙 위반 시 커밋 실패)
