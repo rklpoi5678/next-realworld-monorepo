@@ -1,4 +1,4 @@
-import { PrismaClient, type Prisma  } from "../generated/client";
+import { Prisma, PrismaClient  } from "../generated/client";
 import { exit } from "node:process";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 
@@ -9,7 +9,11 @@ const getPrismaLogLevel = ():Prisma.LogLevel[] => {
     return ["query", "info", "warn", "error"];
 }
 
-const connectionString = process.env.DATABASE_URL as string;
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+    throw new Error("DATABASE_URL 환경 변수가 설정되지 않았습니다.")
+}
 
 // Prisma용 MySQL 어댑터 적용
 const adapter = new PrismaMariaDb(connectionString)
