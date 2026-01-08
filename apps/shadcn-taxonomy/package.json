@@ -17,11 +17,13 @@
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix --max-warnings=0",
-    "prepare": "if [\"$NODE_ENV\"!= \"production\"]; then husky; fi"
+    "prepare": "if [\"$NODE_ENV\"!= \"production\"]; then husky; fi",
+    "migrate:dev": "dotenv -e .env -- prisma migrate dev"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^7.2.0",
+    "@prisma/adapter-mariadb": "^7.2.0",
     "@prisma/client": "^7.2.0",
+    "dotenv": "^17.2.3",
     "next": "16.1.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -32,10 +34,10 @@
     "@tailwindcss/postcss": "^4",
     "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^20",
-    "@types/pg": "^8.16.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
+    "dotenv-cli": "^11.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
     "eslint-config-prettier": "^10.1.8",
