@@ -17,7 +17,7 @@
     "apps/shadcn-taxonomy/**/*.{js,jsx,ts,tsx}" : [
       "pnpm --filter shadcn-taxonomy lint:fix"
     ],
-  "apps/bulletproof-next-16/**/*.{js,jsx,ts,tsx}" : [
+    "apps/bulletproof-next-16/**/*.{js,jsx,ts,tsx}" : [
       "pnpm --filter bulletproof lint"
     ]
   },
