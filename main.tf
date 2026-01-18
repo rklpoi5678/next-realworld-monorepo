@@ -179,7 +179,7 @@ resource "aws_lb_listener" "lms_listener" {
 # sudo pacman -S terraform
 
 # terraform init : AWS대화 준비 (플러그인 설치)
-# terraform plan: 플랜대로 어떻떻 될지 preview
+# terraform plan: 플랜대로 어떻게 될지 preview
 # terraform apply: 실제로 구축을하라 (인프라  생성)
 # terraform destroy : 구축한 인프라 철거
 
