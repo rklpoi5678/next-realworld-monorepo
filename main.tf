@@ -126,6 +126,13 @@ resource "aws_instance" "app_server" {
     vpc_security_group_ids = [aws_security_group.app_sg.id]
     key_name                        = "lms-key" #미리 생성한 키 페어 이름
 
+    # IMDSv2 설정 ( 토큰 기반 세션을 요구 )
+    metadata_options {
+        http_tokens                              = "required"
+        http_endpoint                          = "enabled"
+        http_put_response_hot_limit = 1
+    }
+
     tags                                  = { Name = "lms-app-server"}
 }
 
