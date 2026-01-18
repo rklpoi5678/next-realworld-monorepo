@@ -130,7 +130,7 @@ resource "aws_instance" "app_server" {
     metadata_options {
         http_tokens                              = "required"
         http_endpoint                          = "enabled"
-        http_put_response_hot_limit = 1
+        http_put_response_hop_limit = 1
     }
 
     tags                                  = { Name = "lms-app-server"}
