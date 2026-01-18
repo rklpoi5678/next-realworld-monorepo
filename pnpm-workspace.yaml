@@ -1,3 +1,4 @@
 packages:
-  - "apps/*"
+  - "apps/web/first-devops-test"
+  - "apps/server/first-devops-test"
   - "packages/*"

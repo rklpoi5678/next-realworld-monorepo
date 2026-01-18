@@ -1,0 +1,32 @@
+services:
+  frontend:
+    build:
+      context: .                                          # 빌드 기준점을 루트로 설정
+      dockerfile: apps/web/first-devops-test/Dockerfile    # 실제 Dockerfile 위치 지정
+    ports:
+      - "3000:3000"
+    networks:
+      - lms-network
+  
+  backend:
+    build:
+      context: .
+      dockerfile: apps/server/first-devops-test/Dockerfile
+    ports:
+      - "4000:4000"
+    networks:
+      - lms-network
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - frontend
+      - backend
+  
+networks:
+  lms-network:
+    driver: bridge
