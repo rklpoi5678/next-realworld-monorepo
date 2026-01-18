@@ -34,3 +34,5 @@ out
 crash.log
 
 .terraform.lock.hcl
+
+*.pem
