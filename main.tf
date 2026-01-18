@@ -66,6 +66,7 @@ resource "aws_subnet" "private_subnet" {
 # Security Group - 0.0.0.0/0 금지
 
 ## ALB Security Group (80 port 모든 사람에게 개방)
+## 인터넷에 노출될 ALB는  ACM 인증서 기반 HTTPS + TLS 정책으로 전환해야한다.
 resource  "aws_security_group"  "alb_sg" {
     name                            = "alb-sg"
     vpc_id                          = aws_vpc.lms_vpc.id
@@ -73,6 +74,8 @@ resource  "aws_security_group"  "alb_sg" {
     ingress {
         from_port               = 80
         to_port                   = 80
+        # from_port             = 443
+        # to_port                  = 443
         protocol                  = "tcp"
         cidr_blocks             = ["0.0.0.0/0"] # 외부 전체 허용
     }
@@ -148,6 +151,10 @@ resource "aws_lb_listener" "lms_listener" {
     load_balancer_arn     = aws_lb.lms_alb.arn
     port                             = "80"
     protocol                      = "HTTP"
+    # port                          = "443"
+    # protocol                   = "HTTPS"
+    # ssl_policy                 = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+    # certificate_arn         = var.acm_certificate_arn
 
     default_action {
         type                        = "forward"
