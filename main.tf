@@ -153,6 +153,13 @@ resource "aws_lb_target_group" "lms_tg" {
     vpc_id                          =  aws_vpc.lms_vpc.id
 }
 
+## app server 인스턴스를 타깃 그룹에 연결
+resource "aws_lb_target_group_attachment" "app_server" {
+    target_group_arn = aws_lb_target_group.lms_tg.arn
+    target_id                = aws_instance.app_server.id
+    port                        = 4000
+}
+
 # Listener (80port로 들어온 요청을 TG전달)
 resource "aws_lb_listener" "lms_listener" {
     load_balancer_arn     = aws_lb.lms_alb.arn
