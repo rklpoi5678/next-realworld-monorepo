@@ -1,0 +1,42 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { z } from 'zod';
+
+import { api } from '@/libs/api-client';
+import { MutationConfig } from '@/libs/react-query';
+import { Comment } from '@/types/api';
+
+import { getInfiniteCommentsQueryOptions } from './get-comments';
+
+export const createCommentInputSchema = z.object({
+  discussionId: z.string().min(1, 'Required'),
+  body: z.string().min(1, 'Required'),
+});
+
+export type CreateCommentInput = z.infer<typeof createCommentInputSchema>;
+
+export const createComment = ({ data }: { data: CreateCommentInput }): Promise<Comment> => {
+  return api.post('/comments', data);
+};
+
+type UseCreateCommentOptions = {
+  discussionId: string;
+  mutationConfig?: MutationConfig<typeof createComment>;
+};
+
+export const useCreateComment = ({ discussionId, mutationConfig }: UseCreateCommentOptions) => {
+  const queryClient = useQueryClient();
+
+  const { onSuccess, ...restConfig } = mutationConfig || {};
+
+  return useMutation({
+    ...restConfig,
+    mutationFn: createComment,
+    onSuccess: (...args) => {
+      queryClient.invalidateQueries({
+        queryKey: getInfiniteCommentsQueryOptions(discussionId).queryKey,
+      });
+
+      onSuccess?.(...args);
+    },
+  });
+};
