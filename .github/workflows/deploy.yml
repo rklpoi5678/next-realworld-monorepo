@@ -1,0 +1,108 @@
+name: CI/CD Pipeline  With EC2 and  GHCR (Blue-Green)
+
+on:
+  push:
+    branches: [ "main" ]
+    # server/web 폴더나 workflow 파일이 바뀔 때만 실행 (효율성)
+    paths:
+      - 'apps/server/first-devops-test/**'
+      - ./github/workflows/deploy.yml' 
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  WORKING_DIRECTORY: ./apps/server/first-devops-test # Dockerfile point
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GH_PAT }}
+
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ${{ env.WORKING_DIRECTORY }}/Dockerfile
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # 1. GHCR 로그인
+            echo ${{ secrets.GH_PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            # 2. 이미지 변수 설정 (소문자로 변환 필수)
+            IMAGE_URL=$(echo "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest" | tr '[:upper:]' '[:lower:]')
+            
+            # 3. Blue-Green 배포 로직 시작
+            EXISTING_PORT=$(docker ps --format "{{.Ports}}" | grep -oE "3000|3001" | head -n 1)
+            
+            if [ "$EXISTING_PORT" = "3000" ]; then
+              TARGET_PORT=3001
+              IDLE_PORT=3000
+            else
+              TARGET_PORT=3000
+              IDLE_PORT=3001
+            fi
+
+            echo "🚀 배포 시작: $TARGET_PORT 포트로 새 컨테이너를 띄웁니다."
+
+            # 4. 새 컨테이너 실행
+            docker pull $IMAGE_URL
+            docker stop app-$TARGET_PORT || true
+            docker rm app-$TARGET_PORT || true
+            docker run -d --name app-$TARGET_PORT -p $TARGET_PORT:4000 $IMAGE_URL
+
+            # 5. 헬스 체크 (최대 10번 시도)
+            for i in {1..10}; do
+              echo "Health check attempt $i..."
+              sleep 3
+              # EC2 내부에서 헬스체크 (응답이 200이면 성공)
+              if curl -s localhost:$TARGET_PORT/api/health | grep "ok" > /dev/null; then
+                echo "Health check passed!"
+                break
+              fi
+              if [ $i -eq 10 ]; then
+                echo "Health check failed. 배포를 중단합니다."
+                exit 1
+              fi
+            done
+
+            # 6. Nginx 스위칭 (sed 명령어로 포트 교체)
+            # /etc/nginx/conf.d/default.conf 에 'proxy_pass http://localhost:포트' 가 있다고 가정
+            sudo sed -i "s/localhost:$IDLE_PORT/localhost:$TARGET_PORT/g" /etc/nginx/conf.d/default.conf
+            sudo nginx -s reload
+
+            # 7. 이전 컨테이너 정리
+            echo "🧹 이전 컨테이너(app-$IDLE_PORT)를 정리합니다."
+            docker stop app-$IDLE_PORT || true
+            docker rm app-$IDLE_PORT || true

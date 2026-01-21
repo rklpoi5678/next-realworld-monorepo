@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "./dist",
+    "rootDir": ".",      
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "**/*.ts",           // 현재 폴더와 하위의 모든 .ts 파일 포함
+    "src/**/*.ts"        
+  ],
+  "exclude": [
+    "node_modules",
+  ]
+}
