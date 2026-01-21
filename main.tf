@@ -64,40 +64,35 @@ resource "aws_subnet" "private_subnet" {
 }
 
 # Security Group - 0.0.0.0/0 금지
-
-## ALB Security Group (80 port 모든 사람에게 개방)
-## 인터넷에 노출될 ALB는  ACM 인증서 기반 HTTPS + TLS 정책으로 전환해야한다.
-resource  "aws_security_group"  "alb_sg" {
-    name                            = "alb-sg"
-    vpc_id                          = aws_vpc.lms_vpc.id
-
-    ingress {
-        from_port               = 80
-        to_port                   = 80
-        # from_port             = 443
-        # to_port                  = 443
-        protocol                  = "tcp"
-        cidr_blocks             = ["0.0.0.0/0"] # 외부 전체 허용
-    }
-
-    egress {
-        from_port               =  0
-        to_port                   = 0
-        protocol                 = "-1"
-        cidr_blocks             = ["0.0.0.0/0"]
-    }
-}
-
 # EC2 Security Group (ALB에서만 오는 요청만 가능)
 resource "aws_security_group" "app_sg" {
     name                        = "app-sg"
     vpc_id                      =  aws_vpc.lms_vpc.id
 
+    # 웹 서비스용 (누구나 접속 가능)
     ingress {
-        from_port            = 4000 #  백엔드 포트
-        to_port                 = 4000
+        from_port           = 80
+        to_port               = 80
+        protocol              = "tcp"
+        cidr_blocks         =  ["0.0.0.0/0"]
+    }
+
+    # HTTPS: 나중에 인증서를 붙인다면 443도 필요함
+    ingress {
+        from_port            = 443 #  백엔드 포트
+        to_port                 = 443
         protocol                = "tcp"
-        security_groups  =  [aws_security_group.alb_sg.id] # ALB의 SG만 허용
+        cidr_blocks           = ["0.0.0.0/0"]
+    }
+
+    ## 배포용 (SSH 22번 포트)
+    ## 연습으로 0.0.0.0/0으로 열지만, 실제론 본인 IP만 여는 것이 좋다
+    ## 그래서 자기의 IP만 허용하게 한다 (아래 데이터 소스 체크)
+    ingress {
+        from_port             = 22
+        to_port                 = 22
+        protocol                = "tcp"
+        cidr_blocks           =  ["${chomp(data.http.myip.body)}/32"]
     }
 
     egress {
@@ -122,58 +117,46 @@ resource "aws_instance" "app_server" {
     ami                                  = data.aws_ami.amazon_linux_2023.id
     instance_type                 = "t3.micro"
 
-    subnet_id                        = aws_subnet.private_subnet.id
+    ## Bastion Host (중간 다리 컴퓨터 jump-server) 아니면 AWS SSM(시스템 매니저) 사용 지금은 public으로 개발자가 접속 가능하게
+    subnet_id                        = aws_subnet.public_subnet.id
     vpc_security_group_ids = [aws_security_group.app_sg.id]
     key_name                        = "lms-key" #미리 생성한 키 페어 이름
 
-    # IMDSv2 설정 ( 토큰 기반 세션을 요구 )
+    ## 공인 IP 강제 할당
+    associate_public_ip_address = true
+
+    ## IMDSv2 설정 ( 토큰 기반 세션을 요구 )
     metadata_options {
         http_tokens                              = "required"
         http_endpoint                          = "enabled"
         http_put_response_hop_limit = 1
     }
+    # EC2  생성 시 자동으로 실행될 스크립트
+        user_data = <<-EOF
+                #!/bin/bash
+                # 1. Swap 메모리 설정 (2GB)
+                fallocate -l 2G /swapfile
+                chmod 600 /swapfile
+                mkswap /swapfile
+                swapon /swapfile
+                echo '/swapfile none swap sw 0 0' >> /etc/fstab
+
+                # 2. 기초 패키지 설치 (Docker 등)
+                dnf update -y
+                dnf install -y docker
+                systemctl start docker
+                systemctl enable docker
+                
+                # 유저를 docker 그룹에 추가 (sudo 없이 사용 위함)
+                usermod -aG docker ec2-user
+                EOF
 
     tags                                  = { Name = "lms-app-server"}
 }
 
-# ALB 생성
-resource "aws_lb" "lms_alb" {
-    name                            = "lms-alb"
-    internal                        = false # 외부 노출용
-    load_balancer_type    = "application"
-    security_groups          = [aws_security_group.alb_sg.id]
-    subnets                        = [aws_subnet.public_subnet.id, aws_subnet.public_subnet_2.id] # 최소 2개 AZ 필요 (public sn 2개가 정석)
-}
-
-# Target Group (ALB가 요청 보낼 목적지)
-resource "aws_lb_target_group" "lms_tg" {
-    name                            = "lms-tg"
-    port                              = 4000
-    protocol                       = "HTTP"
-    vpc_id                          =  aws_vpc.lms_vpc.id
-}
-
-## app server 인스턴스를 타깃 그룹에 연결
-resource "aws_lb_target_group_attachment" "app_server" {
-    target_group_arn = aws_lb_target_group.lms_tg.arn
-    target_id                = aws_instance.app_server.id
-    port                        = 4000
-}
-
-# Listener (80port로 들어온 요청을 TG전달)
-resource "aws_lb_listener" "lms_listener" {
-    load_balancer_arn     = aws_lb.lms_alb.arn
-    port                             = "80"
-    protocol                      = "HTTP"
-    # port                          = "443"
-    # protocol                   = "HTTPS"
-    # ssl_policy                 = "ELBSecurityPolicy-TLS13-1-2-2021-06"
-    # certificate_arn         = var.acm_certificate_arn
-
-    default_action {
-        type                        = "forward"
-        target_group_arn  = aws_lb_target_group.lms_tg.arn
-    }
+# 내 현재 IP를 자동으로 가져오는 데이터 소스
+data "http" "myip" {
+    url = "http://ipv4.icanhazip.com"
 }
 
 # sudo pacman -S terraform

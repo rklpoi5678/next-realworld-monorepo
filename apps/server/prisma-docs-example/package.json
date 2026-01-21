@@ -1,0 +1,26 @@
+{
+  "name": "dororo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate": "prisma generate",
+    "build-docs": "prisma generate && cp -r ./prisma/schema/docs ./public",
+    "start": "node app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.18.1",
+  "dependencies": {
+    "@prisma/client": "^7.2.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "prisma": "^7.2.0"
+  },
+  "devDependencies": {
+    "prisma-docs-generator": "^0.8.0",
+    "prisma-markdown": "^4.0.0"
+  }
+}
