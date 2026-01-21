@@ -58,3 +58,19 @@ sequenceDiagram
     BE-->>Nginx: JSON 데이터 응답
     Nginx-->>User: 최종 API 데이터 전달
 ```
+
+## 배포  테스트 확인 순서
+```
+# awsconfig설정을 마친뒤에 아래명령어를 입력해주세요
+# 사전에 chomod 400 으로 키페어 파일 권한을 (1회 해주세요)
+
+terraform init --upgrade  // terraform.lock.hcl 파일에서 이 도구를 쓸거라고 해줘야함  (동기화/ 1회만)
+terraform apply           // awsconfig에 aws사용자에 인스턴스/vpc/보안그룹/swap/docker설치 자동화
+
+# 설치후 ssh로 접속후 아래명령어로 swap이 잘되었는지확인 (2GB)
+ssh -i "키페어파일위치" ec2-user@<여러분의-EC2-공인-IP>
+free -h                           //  swap  항목에 2.0Gi라고 나오면  성공!
+docker ps 또는 docker --version    //  sudo 없이 실행 가능하다면 성공 (테라폼 코드를 확인해주세요 유저 그룹에 세팅을 해놓았습니다.)
+
+terraform destory         // 테스트가 다끝나면 aws에 인스턴스를 치워줍니다.
+```
