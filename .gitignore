@@ -21,3 +21,18 @@ node_modules
 out
 ## turbo-repo
 .turbo
+
+# 1. terraform 
+.terraform/
+
+*.tfstate
+*.tfstate.backup
+
+*.tfvars
+*.tfvars.json
+
+crash.log
+
+.terraform.lock.hcl
+
+*.pem
