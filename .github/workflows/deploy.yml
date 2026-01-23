@@ -2,7 +2,8 @@ name: CI/CD Pipeline  With EC2 and  GHCR (Blue-Green)
 
 on:
   push:
-    branches: [ "main" ]
+  # 빠른 테스트를 위해 브랜치를 staging으로 변경
+    branches: [ "staging" ]
     # server/web 폴더나 workflow 파일이 바뀔 때만 실행 (효율성)
     paths:
       - 'apps/server/first-devops-test/**'
@@ -74,7 +75,7 @@ jobs:
               IDLE_PORT=3001
             fi
 
-            echo "배포 시작: $TARGET_PORT 포트로 새 컨테이너를 띄웁니다."
+            echo "🚀 배포 시작: $TARGET_PORT 포트로 새 컨테이너를 띄웁니다."
 
             # 4. 새 컨테이너 실행
             docker pull $IMAGE_URL
