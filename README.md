@@ -61,6 +61,14 @@ sequenceDiagram
 
 ## 배포  테스트 확인 순서
 ```
+# git actions를 이용한 CI/CD을 사용하기에.
+# Settings > Secrets and variables > Actions 안에 해당 항목이 존재해야합니다.
+EC2_HOST                    // 퍼블릭 ip
+EC2_SSH_KEY              // .pem 키 내용
+EC2_USER                    // 기본 ec2-user
+GH_PAT                        // GHCR(GitHub Container Registry)에 로그인을 위한 GitHub Personal Access Token키
+```
+```
 # awsconfig설정을 마친뒤에 아래명령어를 입력해주세요
 # 사전에 chomod 400 으로 키페어 파일 권한을 (1회 해주세요)
 
