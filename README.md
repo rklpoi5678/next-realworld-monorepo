@@ -64,12 +64,12 @@ sequenceDiagram
 # git actions를 이용한 CI/CD을 사용하기에.
 # Settings > Secrets and variables > Actions 안에 해당 항목이 존재해야합니다.
 EC2_HOST                    // 퍼블릭 ip
-EC2_SSH_KEY              // .pem 키 내용
+EC2_SSH_KEY                 // .pem 키 내용
 EC2_USER                    // 기본 ec2-user
-GH_PAT                        // GHCR(GitHub Container Registry)에 로그인을 위한 GitHub Personal Access Token키
+GH_PAT                      // GHCR(GitHub Container Registry)에 로그인을 위한 GitHub Personal Access Token키
 ```
 ```
-# awsconfig설정을 마친뒤에 아래명령어를 입력해주세요
+# awsconfig설정을 마친뒤에 아래명령어를 입력해주세요 (여기서는 설명하지 않습니다.)
 # 사전에 chomod 400 으로 키페어 파일 권한을 (1회 해주세요)
 
 terraform init --upgrade  // terraform.lock.hcl 파일에서 이 도구를 쓸거라고 해줘야함  (동기화/ 1회만)
@@ -80,6 +80,12 @@ terraform apply           // awsconfig에 aws사용자에 인스턴스/vpc/보�
 ssh -i "키페어파일위치" ec2-user@<여러분의-EC2-공인-IP>
 free -h                           //  swap  항목에 2.0Gi라고 나오면  성공!
 docker ps 또는 docker --version    //  sudo 없이 실행 가능하다면 성공 (테라폼 코드를 확인해주세요 유저 그룹에 세팅을 해놓았습니다.)
+```
+```
+# 현재 설정에서는 22번 포트가 나의 ip를 가리키는데 테스트를 위해선 돌려야됩니다. 아래는 참고사항입니다.
+# dial tcp ***:22: i/o timeout (접속 불가) 가 나오기때문에
+# 즉, 보안 그룹에 22번 포트가 열려 있더라도 '내 IP'로만 한정되어 있다면, GitHub Actions의 유동 IP는 거부당합니다.
+# EC2 22번 포트를 0.0.0.0/0(모든포트혀용)으로 일단 맞추고 테스트해봅시다.
 ```
 ```
 # Docker Compose 설치 (현재:  Amazon  Linux 2023 용입니다.)
