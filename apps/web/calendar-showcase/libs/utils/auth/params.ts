@@ -1,0 +1,43 @@
+export interface ArticleParams {
+    tab?: string;
+    tag?: string;
+    page?: string;
+    limit?: string;
+    author?: string;
+    favorited?: string;
+};
+
+export const  DEFAULT_PARAMS: ArticleParams = {
+    tab: "global",
+    tag: "",
+    page: "1",
+    limit: "10",
+    author: "",
+    favorited: "",
+};
+
+export type TabType = "global" | "personal";
+
+//비동기 파라미터 초기화함수
+export async function initializeParams(
+    searchParams: Promise<Record<string,string | string[] | undefined>>,
+    customParams: Partial<ArticleParams> = {}
+): Promise<ArticleParams> {
+    const params = await searchParams;
+    const convertedParams: ArticleParams = {};
+
+    Object.entries(params).forEach(([key, value]) => {
+        if (value) {
+            convertedParams[key as keyof ArticleParams] = Array.isArray(value)
+                ? value[0]
+                : (value as string);
+        }
+    });
+
+    return {
+        ...DEFAULT_PARAMS,
+        ...convertedParams,
+        ...customParams,
+    };
+}
+    
