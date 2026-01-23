@@ -7,7 +7,7 @@ on:
     # server/web 폴더나 workflow 파일이 바뀔 때만 실행 (효율성)
     paths:
       - 'apps/server/first-devops-test/**'
-      - ./github/workflows/deploy.yml' 
+      - '.github/workflows/deploy.yml' 
 
 env:
   REGISTRY: ghcr.io
