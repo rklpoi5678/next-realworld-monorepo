@@ -57,7 +57,7 @@ export async function uploadAllImages(items) {
     const item = items[i];
     if (!item.localImagePath) continue;
 
-    const localPath = path.resolve(item.localImagePath);
+    const localPath = path.resolve('data', item.localImagePath.replace(/^\.\//, ''));
     if (!existsSync(localPath)) {
       console.warn(`Image not found, skipping: ${localPath}`);
       continue;

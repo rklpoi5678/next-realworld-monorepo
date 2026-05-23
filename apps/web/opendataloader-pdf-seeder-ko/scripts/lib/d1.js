@@ -53,15 +53,13 @@ export async function bulkInsert(items) {
     const batch = items.slice(i, i + BATCH_SIZE);
     const values = batch.map(item => {
       const name = escapeSQL(item.name);
-      const standard = escapeSQL(item.standard);
       const defects = escapeSQL(item.defects || '');
-      const remark = escapeSQL(item.remark || '');
       const r2ImageUrl = escapeSQL(item.r2ImageUrl || '');
       const part = escapeSQL(item.part);
-      return `('${name}', '${standard}', '${defects}', '${remark}', '${r2ImageUrl}', '${part}')`;
+      return `('${name}', '${defects}', '${r2ImageUrl}', '${part}')`;
     }).join(', ');
 
-    const sql = `INSERT INTO inspection_rules (name, standard, defects, remark, r2_image_url, part) VALUES ${values}`;
+    const sql = `INSERT INTO inspection_rules (name, defects, r2_image_url, part) VALUES ${values}`;
 
     console.log(`Inserting batch ${Math.floor(i / BATCH_SIZE) + 1} (${batch.length} rows)...`);
     const result = await d1Query(sql);
