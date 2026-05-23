@@ -4,12 +4,19 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 
 function getR2Client() {
+  const endpoint = process.env.CF_R2_ENDPOINT;
+  const accessKeyId = process.env.CF_R2_ACCESS_KEY_ID;
+  const secretAccessKey = process.env.CF_R2_SECRET_ACCESS_KEY;
+
+  if (!endpoint || !accessKeyId || !secretAccessKey) {
+    throw new Error('Missing CF_R2_ENDPOINT, CF_R2_ACCESS_KEY_ID, or CF_R@_SECRET_ACCESS_KEY');
+  }
   return new S3Client({
     region: 'auto',
-    endpoint: process.env.CF_R2_ENDPOINT,
+    endpoint,
     credentials: {
-      accessKeyId: process.env.CF_R2_ACCESS_KEY_ID,
-      secretAccessKey: process.env.CF_R2_SECRET_ACCESS_KEY,
+      accessKeyId,
+      secretAccessKey,
     },
     forcePathStyle: true,
   });
@@ -42,7 +49,7 @@ export async function uploadToR2(localPath, key) {
     ContentType: getContentType(localPath),
   }));
 
-  return `${publicUrl.replace(/\/$/, '')}/${key}`;
+  return `${publicUrl.replace(/\/$/, '')}/${bucket}/${key}`;
 }
 
 /**
