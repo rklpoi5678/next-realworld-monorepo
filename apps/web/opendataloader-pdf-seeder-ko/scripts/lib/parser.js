@@ -63,8 +63,6 @@ function extractTableRows(doc, part) {
     return items;
   }
 
-  currentKids = kids; // Set for image lookup in parseTable
-
   for (const kid of kids) {
     if (kid.type === 'table') {
       const rows = parseTable(kid, part);
@@ -86,10 +84,10 @@ function extractTableRows(doc, part) {
  * B-Mart inspection tables have fixed format:
  * Row 0: headers (파트|상품명|중량 & 사이즈|외박스|Packing type|허용기준|Remark)
  * Row 1: sub-headers (판매단위|개별|Type|입수(ea))
- * Row 2: product info (신선|name|weight|count|box_type|standard|remark)
- * Row 3: defects (성상 label in col 2| 부적합사항 in col 8| defects text in col 9| Remark)
- * Row 4: image labels
- * Row 5: empty
+ * Row 2: product info (신선|name|weight|count|box_type|...|...)
+ * Row 3: defects (성상 label in col 2| 부적합사항 in col 8| defects text in col 9)
+ * Row 4: image labels (제품전/후면 in col2| 박스/적재 in col5)
+ * Row 5: images (col2=product, col5=box, col8=defect images)
  */
 function parseTable(table, part) {
   const items = [];
@@ -100,50 +98,48 @@ function parseTable(table, part) {
     return kids.map(k => (k.content || '').trim()).join(' ');
   });
 
-  // Only parse inspection tables (7-column format)
+  // Only parse inspection tables (must have 상품명 header)
   if (!headers.includes('상품명')) return items;
-
-  const pageNum = table['page number'] || 0;
 
   // Extract from row 2 (product info)
   const r2 = table.rows[2].cells;
-  const name = cellText(r2[1]);   // column 1 = 상품명
-  const standard = cellText(r2[headers.indexOf('허용기준')]); // column 5 = 허용기준
-  const remark = cellText(r2[headers.indexOf('Remark')]);     // column 6 = Remark
+  const name = cellText(r2[1]); // column 1 = 상품명
 
   if (!name || name.trim() === '') return items;
 
-  // Extract defects from row 3
-  // Defects text can be in any cell after column 4 (skip the part/product columns).
-  // Strategy: collect ALL non-label text from row 3 cells with column number > 4.
+  // Extract defects text from multiple possible locations:
+  // - row 3 col 9 (pages 1-2)
+  // - row 5 col 9 (most pages)
+  // - row 5 col 5 (variant: page 3 etc.)
   let defects = '';
-  const skipLabels = new Set(['성상', '부적합사항', '부적합', 'Remark', '제품전/후면', '박스 / 적재', '판매단위', '개별', 'Type', '입수(ea)', 'Packing type', '중량 & 사이즈', '외박스']);
-  if (table.rows.length > 3) {
-    for (const cell of table.rows[3].cells) {
-      const colNum = cell['column number'] || 0;
-      if (colNum <= 4) continue; // Skip part/product columns
-      if (!cell.kids) continue;
-      for (const kid of cell.kids) {
-        const txt = (kid.content || '').trim();
-        if (txt && !skipLabels.has(txt)) {
-          defects += (defects ? ' ' : '') + txt;
-        }
+  const collectDefects = (cell) => {
+    for (const kid of cell.kids || []) {
+      const txt = (kid.content || '').trim();
+      if (txt && txt !== 'Remark') {
+        defects += (defects ? ' ' : '') + txt;
       }
     }
-  }
+  };
 
-  // Clean up defects (remove "Remark" suffix if present)
-  defects = defects.replace(/^Remark\s*/i, '').trim();
+  const tryCollect = (row, colNum) => {
+    for (const cell of row.cells) {
+      if ((cell['column number'] || 0) === colNum) collectDefects(cell);
+    }
+  };
 
-  // Get images for this page
-  const pageImages = getPageImages(pageNum);
+  if (table.rows.length > 3) tryCollect(table.rows[3], 9);
+  if (!defects && table.rows.length > 5) tryCollect(table.rows[5], 9);
+  if (!defects && table.rows.length > 5) tryCollect(table.rows[5], 5);
+
+  defects = defects.replace(/\s*Remark\s*$/, '').trim();
+
+  // Get defect images from row 5, column 8 (부적합사항 column)
+  const defectImages = getDefectImages(table);
 
   items.push({
     name,
-    standard,
     defects,
-    remark,
-    localImagePath: pageImages.length > 0 ? `./images/${path.basename(pageImages[0])}` : '',
+    localImagePath: defectImages.length > 0 ? `./images/${path.basename(defectImages[0])}` : '',
     part,
   });
 
@@ -151,19 +147,39 @@ function parseTable(table, part) {
 }
 
 /**
- * Get images for a specific page number.
+ * Extract defect images from row 5.
+ * Images are in the same column as the defect label in row 3 (not col2=성상).
  */
-function getPageImages(pageNum) {
+function getDefectImages(table) {
   const imgs = [];
-  for (const kid of currentKids) {
-    if (kid.type === 'image' && kid['page number'] === pageNum) {
-      imgs.push(kid.source || kid.path || '');
+  if (table.rows.length < 6) return imgs;
+
+  // Find defect label column in row 3 (exclude col2 which is 성상/기준)
+  let defectCol = 8; // default
+  if (table.rows.length > 3) {
+    for (const cell of table.rows[3].cells) {
+      const colNum = cell['column number'] || 0;
+      if (colNum === 2) continue;
+      const txt = cellText(cell);
+      if (txt && txt !== 'Remark') {
+        defectCol = colNum;
+        break;
+      }
     }
   }
-  return imgs.filter(Boolean);
+
+  for (const cell of table.rows[5].cells) {
+    const colNum = cell['column number'] || 0;
+    if (colNum !== defectCol) continue;
+    for (const kid of cell.kids || []) {
+      if (kid.type === 'image' && kid.source) {
+        imgs.push(kid.source);
+      }
+    }
+  }
+  return imgs;
 }
 
-let currentKids = []; // Module-level state for image lookup
 
 /**
  * Fallback: parse paragraph/list kids as table rows when no structured table found.
