@@ -13,6 +13,10 @@ const IMAGES_DIR = path.resolve('data/images');
  * @returns {Promise<Array<{name: string, standard: string, defects: string, remark: string, localImagePath: string, part: string}>>}
  */
 export async function parsePDF(pdfPath, part = 'fresh') {
+  const normalizedPart = String(part).toLowerCase();
+  if (!['fresh', 'frozen'].includes(normalizedPart)) {
+    throw new Error(`Invalid part: ${part}. Must be 'fresh' or 'frozen'`);
+  }
   if (!existsSync(pdfPath)) {
     throw new Error(`PDF not found: ${pdfPath}`);
   }
@@ -45,7 +49,7 @@ export async function parsePDF(pdfPath, part = 'fresh') {
   const doc = JSON.parse(raw);
 
   // Step 3: Extract table rows from JSON structure
-  const items = extractTableRows(doc, part);
+  const items = extractTableRows(doc, normalizedPart);
 
   return items;
 }

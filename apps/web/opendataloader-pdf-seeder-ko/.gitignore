@@ -24,5 +24,6 @@ dist-ssr
 *.sw?
 
 # PDF Seeder
-.env
+.env*
+!.env.example
 data/
