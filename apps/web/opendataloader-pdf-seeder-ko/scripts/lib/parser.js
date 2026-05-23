@@ -51,138 +51,147 @@ export async function parsePDF(pdfPath, part = 'fresh') {
 }
 
 /**
- * Extract table rows matching 상품명/허용기준/부적합사항/Remark columns.
- * opendataloader JSON structure: doc.pages[].blocks[] or doc.pages[].tables[]
+ * Extract table rows matching 파트|상품명|...|허용기준|Remark columns.
+ * opendataloader JSON structure: doc.kids[] (flat list of pages/tables/images)
  */
 function extractTableRows(doc, part) {
   const items = [];
 
-  if (!doc.pages) {
-    console.warn('No pages found in PDF output');
+  const kids = doc.kids;
+  if (!kids) {
+    console.warn('No kids found in PDF output');
     return items;
   }
 
-  for (const page of doc.pages) {
-    // Try structured tables first
-    if (page.tables) {
-      for (const table of page.tables) {
-        const rows = parseTable(table, part);
-        items.push(...rows);
-      }
-    }
+  currentKids = kids; // Set for image lookup in parseTable
 
-    // Fallback: parse text blocks as table rows
-    if (items.length === 0 && page.blocks) {
-      const rows = parseBlocksAsTable(page.blocks, part);
+  for (const kid of kids) {
+    if (kid.type === 'table') {
+      const rows = parseTable(kid, part);
       items.push(...rows);
     }
   }
 
-  // Map images to items by page proximity
-  mapImagesToItems(doc, items);
+  // Fallback: parse paragraph/list kids as table rows
+  if (items.length === 0) {
+    const rows = parseKidsAsRows(kids, part);
+    items.push(...rows);
+  }
 
   return items;
 }
 
 /**
  * Parse structured table data from opendataloader output.
- * Assumes first row is header with 상품명/허용기준/부적합사항/Remark columns.
+ * B-Mart inspection tables have fixed format:
+ * Row 0: headers (파트|상품명|중량 & 사이즈|외박스|Packing type|허용기준|Remark)
+ * Row 1: sub-headers (판매단위|개별|Type|입수(ea))
+ * Row 2: product info (신선|name|weight|count|box_type|standard|remark)
+ * Row 3: defects (성상 label in col 2| 부적합사항 in col 8| defects text in col 9| Remark)
+ * Row 4: image labels
+ * Row 5: empty
  */
 function parseTable(table, part) {
   const items = [];
-  if (!table.rows || table.rows.length < 2) return items;
+  if (!table.rows || table.rows.length < 3) return items;
 
-  const headers = table.rows[0].map(cell => (cell.text || '').trim());
+  const headers = table.rows[0].cells.map(cell => {
+    const kids = cell.kids || [];
+    return kids.map(k => (k.content || '').trim()).join(' ');
+  });
 
-  // Find column indices
-  const nameIdx = headers.findIndex(h => h.includes('상품명') || h.includes('품명') || h.includes('품목'));
-  const standardIdx = headers.findIndex(h => h.includes('허용기준') || h.includes('기준'));
-  const defectsIdx = headers.findIndex(h => h.includes('부적합') || h.includes('불용'));
-  const remarkIdx = headers.findIndex(h => h.includes('Remark') || h.includes('비고'));
+  // Only parse inspection tables (7-column format)
+  if (!headers.includes('상품명')) return items;
 
-  if (nameIdx === -1) return items; // Not a valid inspection table
+  const pageNum = table['page number'] || 0;
 
-  for (let i = 1; i < table.rows.length; i++) {
-    const row = table.rows[i];
-    const name = cellText(row[nameIdx]);
-    if (!name) continue;
+  // Extract from row 2 (product info)
+  const r2 = table.rows[2].cells;
+  const name = cellText(r2[1]);   // column 1 = 상품명
+  const standard = cellText(r2[headers.indexOf('허용기준')]); // column 5 = 허용기준
+  const remark = cellText(r2[headers.indexOf('Remark')]);     // column 6 = Remark
 
-    items.push({
-      name,
-      standard: cellText(row[standardIdx]),
-      defects: cellText(row[defectsIdx]),
-      remark: cellText(row[remarkIdx]),
-      localImagePath: '',
-      part,
-    });
-  }
+  if (!name || name.trim() === '') return items;
 
-  return items;
-}
-
-/**
- * Fallback: parse text blocks as table rows when no structured table found.
- */
-function parseBlocksAsTable(blocks, part) {
-  const items = [];
-  const textBlocks = blocks
-    .filter(b => b.text && b.text.trim())
-    .map(b => b.text.trim());
-
-  // Heuristic: blocks that look like table rows (contain multiple tab-separated or spaced fields)
-  for (const block of textBlocks) {
-    const fields = block.split(/\t| {2,}/);
-    if (fields.length >= 3) {
-      items.push({
-        name: fields[0] || '',
-        standard: fields[1] || '',
-        defects: fields[2] || '',
-        remark: fields[3] || '',
-        localImagePath: '',
-        part,
-      });
-    }
-  }
-
-  return items;
-}
-
-function cellText(cell) {
-  if (!cell) return '';
-  return (cell.text || '').trim();
-}
-
-/**
- * Map extracted images to items by page proximity.
- * Images on the same page as an item are assigned to that item.
- */
-function mapImagesToItems(doc, items) {
-  if (!doc.pages) return;
-
-  const imageFiles = [];
-  for (const page of doc.pages) {
-    if (page.images) {
-      for (const img of page.images) {
-        if (img.path) {
-          imageFiles.push({
-            page: page.pageNumber || 0,
-            path: img.path,
-          });
+  // Extract defects from row 3
+  // Defects text can be in any cell after column 4 (skip the part/product columns).
+  // Strategy: collect ALL non-label text from row 3 cells with column number > 4.
+  let defects = '';
+  const skipLabels = new Set(['성상', '부적합사항', '부적합', 'Remark', '제품전/후면', '박스 / 적재', '판매단위', '개별', 'Type', '입수(ea)', 'Packing type', '중량 & 사이즈', '외박스']);
+  if (table.rows.length > 3) {
+    for (const cell of table.rows[3].cells) {
+      const colNum = cell['column number'] || 0;
+      if (colNum <= 4) continue; // Skip part/product columns
+      if (!cell.kids) continue;
+      for (const kid of cell.kids) {
+        const txt = (kid.content || '').trim();
+        if (txt && !skipLabels.has(txt)) {
+          defects += (defects ? ' ' : '') + txt;
         }
       }
     }
   }
 
-  if (imageFiles.length === 0) return;
+  // Clean up defects (remove "Remark" suffix if present)
+  defects = defects.replace(/^Remark\s*/i, '').trim();
 
-  // Assign images to items on the same page (1:1 mapping by order)
-  let imgIdx = 0;
-  for (const item of items) {
-    if (imgIdx < imageFiles.length) {
-      const img = imageFiles[imgIdx];
-      const filename = path.basename(img.path);
-      item.localImagePath = `./images/${filename}`;
-      imgIdx++;
+  // Get images for this page
+  const pageImages = getPageImages(pageNum);
+
+  items.push({
+    name,
+    standard,
+    defects,
+    remark,
+    localImagePath: pageImages.length > 0 ? `./images/${path.basename(pageImages[0])}` : '',
+    part,
+  });
+
+  return items;
+}
+
+/**
+ * Get images for a specific page number.
+ */
+function getPageImages(pageNum) {
+  const imgs = [];
+  for (const kid of currentKids) {
+    if (kid.type === 'image' && kid['page number'] === pageNum) {
+      imgs.push(kid.source || kid.path || '');
     }
   }
+  return imgs.filter(Boolean);
+}
+
+let currentKids = []; // Module-level state for image lookup
+
+/**
+ * Fallback: parse paragraph/list kids as table rows when no structured table found.
+ */
+function parseKidsAsRows(kids, part) {
+  const items = [];
+  for (const kid of kids) {
+    if (kid.type === 'paragraph' || kid.type === 'list') {
+      const text = (kid.content || '').trim();
+      if (!text) continue;
+      const fields = text.split(/\t| {2,}/);
+      if (fields.length >= 3) {
+        items.push({
+          name: fields[0] || '',
+          standard: fields[1] || '',
+          defects: fields[2] || '',
+          remark: fields[3] || '',
+          localImagePath: '',
+          part,
+        });
+      }
+    }
+  }
+  return items;
+}
+
+function cellText(cell) {
+  if (!cell) return '';
+  const kids = cell.kids || [];
+  return kids.map(k => (k.content || '').trim()).join(' ');
 }
