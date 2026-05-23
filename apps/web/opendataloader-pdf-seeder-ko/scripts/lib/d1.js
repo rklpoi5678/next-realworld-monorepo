@@ -1,11 +1,6 @@
 const CF_API_BASE = 'https://api.cloudflare.com/client/v4';
 
-/**
- * Execute SQL against D1 via Cloudflare REST API.
- * @param {string} sql - SQL statement
- * @returns {Promise<object>} API response
- */
-async function d1Query(sql) {
+async function d1Query(sql, params = []) {
   const accountId = process.env.CF_ACCOUNT_ID;
   const databaseId = process.env.CF_D1_DATABASE_ID;
   const token = process.env.CF_API_TOKEN;
@@ -22,7 +17,7 @@ async function d1Query(sql) {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ sql }),
+    body: JSON.stringify({ sql, params }),
   });
 
   const json = await res.json();
@@ -37,8 +32,7 @@ async function d1Query(sql) {
 
 /**
  * Bulk insert inspection rules into D1.
- * Batches 100 rows per request (SQLite compound SELECT limit).
- * @param {Array<{name: string, standard: string, defects: string, remark: string, r2ImageUrl: string, part: string}>} items
+ * Uses parameterized queries per row to avoid SQL injection and special character issues.
  */
 export async function bulkInsert(items) {
   if (items.length === 0) {
@@ -46,33 +40,20 @@ export async function bulkInsert(items) {
     return;
   }
 
-  const BATCH_SIZE = 100;
   let inserted = 0;
 
-  for (let i = 0; i < items.length; i += BATCH_SIZE) {
-    const batch = items.slice(i, i + BATCH_SIZE);
-    const values = batch.map(item => {
-      const name = escapeSQL(item.name);
-      const defects = escapeSQL(item.defects || '');
-      const r2ImageUrl = escapeSQL(item.r2ImageUrl || '');
-      const part = escapeSQL(item.part);
-      return `('${name}', '${defects}', '${r2ImageUrl}', '${part}')`;
-    }).join(', ');
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    const sql = `INSERT INTO inspection_rules (name, defects, r2_image_url, part) VALUES (?, ?, ?, ?)`;
+    const params = [item.name, item.defects || '', item.r2ImageUrl || '', item.part];
 
-    const sql = `INSERT INTO inspection_rules (name, defects, r2_image_url, part) VALUES ${values}`;
+    if ((i + 1) % 100 === 0 || i === items.length - 1) {
+      console.log(`Inserting ${i + 1}/${items.length}...`);
+    }
 
-    console.log(`Inserting batch ${Math.floor(i / BATCH_SIZE) + 1} (${batch.length} rows)...`);
-    const result = await d1Query(sql);
-    console.log(`  Result: ${result.result?.[0]?.meta?.rows_written || 'OK'}`);
-    inserted += batch.length;
+    await d1Query(sql, params);
+    inserted++;
   }
 
   console.log(`Total inserted: ${inserted} rows`);
-}
-
-/**
- * Escape single quotes for SQL string literals.
- */
-function escapeSQL(str) {
-  return str.replace(/'/g, "''");
 }
